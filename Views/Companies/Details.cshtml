@@ -1,0 +1,51 @@
+@model CompanyProfile
+@{
+    ViewData["Title"] = Model.CompanyName;
+}
+<div class="hrm-card p-4 mb-3">
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <img src="@(Model.ProfilePhotoPath ?? "/images/default-avatar.svg")" class="hrm-avatar-lg" alt="Company logo" />
+        <div>
+            <h1 class="h3 mb-0">@Model.CompanyName</h1>
+            <div class="text-secondary">@Model.Industry</div>
+            <div class="small text-muted">@Model.Location</div>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p class="mb-2 preserve-lines">@Model.Description</p>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Website))
+    {
+        <a href="@Model.Website" target="_blank" class="hrm-link-chip">Visit website</a>
+    }
+</div>
+
+<div class="hrm-card p-4">
+    <h2 class="h5 mb-3">Open listings</h2>
+    @if (!Model.JobPostings.Any(j => j.IsActive))
+    {
+        <p class="text-secondary mb-0">No active job postings.</p>
+    }
+    else
+    {
+        @foreach (var job in Model.JobPostings.Where(j => j.IsActive).OrderByDescending(j => j.CreatedAt))
+        {
+            <div class="border rounded p-2 mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><strong>@job.Title</strong> - @job.Location</div>
+                    <div>
+                        @if (User.IsInRole("Candidate"))
+                        {
+                            <a class="btn btn-sm hrm-btn-primary" asp-controller="Candidate" asp-action="Apply" asp-route-id="@job.Id">Apply</a>
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-sm btn-outline-dark" asp-controller="Admin" asp-action="JobAdminDetails" asp-route-id="@job.Id">View</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

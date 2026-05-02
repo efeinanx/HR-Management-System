@@ -13,11 +13,13 @@ public class CandidateController : Controller
 {
     private readonly HrmDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IWebHostEnvironment _env;
 
-    public CandidateController(HrmDbContext db, UserManager<ApplicationUser> userManager)
+    public CandidateController(HrmDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
     {
         _db = db;
         _userManager = userManager;
+        _env = env;
     }
 
     private async Task<CandidateProfile?> GetProfileAsync()
@@ -25,6 +27,14 @@ public class CandidateController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return null;
         return await _db.CandidateProfiles.FirstOrDefaultAsync(c => c.UserId == user.Id);
+    }
+
+    private void FillStaticDropdowns()
+    {
+        ViewBag.Cities = StaticOptions.Cities;
+        ViewBag.Universities = StaticOptions.Universities;
+        ViewBag.Faculties = StaticOptions.Faculties;
+        ViewBag.LanguageLevels = StaticOptions.LanguageLevels;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -49,31 +59,43 @@ public class CandidateController : Controller
     {
         ViewData["Title"] = "My profile";
         ViewBag.Section = "profile";
+        FillStaticDropdowns();
+
         var profile = await GetProfileAsync();
         if (profile == null)
             return NotFound();
 
-        var vm = new CandidateProfileViewModel
+        var vm = new CandidateProfilePageViewModel
         {
-            FullName = profile.FullName,
-            Headline = profile.Headline,
-            Summary = profile.Summary,
-            Phone = profile.Phone,
-            Location = profile.Location
+            Profile = new CandidateProfileViewModel
+            {
+                FullName = profile.FullName,
+                Headline = profile.Headline,
+                Summary = profile.Summary,
+                Phone = profile.Phone,
+                Location = profile.Location,
+                ExistingPhotoPath = profile.ProfilePhotoPath
+            },
+            Educations = await _db.CandidateEducations.Where(x => x.CandidateProfileId == profile.Id).OrderByDescending(x => x.StartMonth).ToListAsync(),
+            Experiences = await _db.CandidateExperiences.Where(x => x.CandidateProfileId == profile.Id).OrderByDescending(x => x.StartMonth).ToListAsync(),
+            Languages = await _db.CandidateLanguages.Where(x => x.CandidateProfileId == profile.Id).OrderBy(x => x.Language).ToListAsync(),
+            Certificates = await _db.CandidateCertificates.Where(x => x.CandidateProfileId == profile.Id).OrderByDescending(x => x.Year).ToListAsync()
         };
         return View(vm);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Profile(CandidateProfileViewModel model)
+    public async Task<IActionResult> Profile(CandidateProfilePageViewModel page)
     {
         ViewData["Title"] = "My profile";
         ViewBag.Section = "profile";
+        FillStaticDropdowns();
 
         if (!ModelState.IsValid)
-            return View(model);
+            return await Profile();
 
+        var model = page.Profile;
         var profile = await GetProfileAsync();
         if (profile == null)
             return NotFound();
@@ -83,6 +105,9 @@ public class CandidateController : Controller
         profile.Summary = model.Summary?.Trim();
         profile.Phone = model.Phone?.Trim();
         profile.Location = model.Location?.Trim();
+
+        if (model.ProfilePhoto is { Length: > 0 })
+            profile.ProfilePhotoPath = await SaveFileAsync(model.ProfilePhoto, "uploads/photos");
 
         var user = await _userManager.GetUserAsync(User);
         if (user != null)
@@ -96,11 +121,179 @@ public class CandidateController : Controller
         return RedirectToAction(nameof(Profile));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddEducation(CandidateProfilePageViewModel page)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+
+        var e = page.NewEducation;
+        var university = e.University == "Other" ? e.OtherUniversity : e.University;
+        if (string.IsNullOrWhiteSpace(university) || string.IsNullOrWhiteSpace(e.Faculty) || string.IsNullOrWhiteSpace(e.Department) || string.IsNullOrWhiteSpace(e.StartMonth))
+        {
+            TempData["Message"] = "Education fields are required.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        _db.CandidateEducations.Add(new CandidateEducation
+        {
+            CandidateProfileId = profile.Id,
+            University = university!.Trim(),
+            Faculty = e.Faculty,
+            Department = e.Department.Trim(),
+            StartMonth = e.StartMonth,
+            EndMonth = e.EndMonth
+        });
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Education added.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddExperience(CandidateProfilePageViewModel page)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+
+        var x = page.NewExperience;
+        if (string.IsNullOrWhiteSpace(x.CompanyName) || string.IsNullOrWhiteSpace(x.Position) || string.IsNullOrWhiteSpace(x.StartMonth))
+        {
+            TempData["Message"] = "Experience fields are required.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        _db.CandidateExperiences.Add(new CandidateExperience
+        {
+            CandidateProfileId = profile.Id,
+            CompanyName = x.CompanyName.Trim(),
+            Position = x.Position.Trim(),
+            StartMonth = x.StartMonth,
+            EndMonth = x.EndMonth,
+            Description = x.Description?.Trim()
+        });
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Experience added.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddLanguage(CandidateProfilePageViewModel page)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+
+        var l = page.NewLanguage;
+        if (string.IsNullOrWhiteSpace(l.Language))
+        {
+            TempData["Message"] = "Language is required.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        _db.CandidateLanguages.Add(new CandidateLanguage
+        {
+            CandidateProfileId = profile.Id,
+            Language = l.Language.Trim(),
+            Level = l.Level
+        });
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Language added.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddCertificate(CandidateProfilePageViewModel page)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+
+        var c = page.NewCertificate;
+        if (string.IsNullOrWhiteSpace(c.CertificateName) || string.IsNullOrWhiteSpace(c.Issuer) || string.IsNullOrWhiteSpace(c.IssueDate))
+        {
+            TempData["Message"] = "Certificate fields are required.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        if (!DateTime.TryParse(c.IssueDate, out var issueDate))
+        {
+            TempData["Message"] = "Invalid certificate date.";
+            return RedirectToAction(nameof(Profile));
+        }
+
+        _db.CandidateCertificates.Add(new CandidateCertificate
+        {
+            CandidateProfileId = profile.Id,
+            CertificateName = c.CertificateName.Trim(),
+            Issuer = c.Issuer.Trim(),
+            Year = issueDate.Year,
+            CertificateLink = c.CertificateLink?.Trim()
+        });
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Certificate added.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteEducation(int id)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+        var row = await _db.CandidateEducations.FirstOrDefaultAsync(x => x.Id == id && x.CandidateProfileId == profile.Id);
+        if (row == null) return NotFound();
+        _db.CandidateEducations.Remove(row);
+        await _db.SaveChangesAsync();
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteExperience(int id)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+        var row = await _db.CandidateExperiences.FirstOrDefaultAsync(x => x.Id == id && x.CandidateProfileId == profile.Id);
+        if (row == null) return NotFound();
+        _db.CandidateExperiences.Remove(row);
+        await _db.SaveChangesAsync();
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteLanguage(int id)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+        var row = await _db.CandidateLanguages.FirstOrDefaultAsync(x => x.Id == id && x.CandidateProfileId == profile.Id);
+        if (row == null) return NotFound();
+        _db.CandidateLanguages.Remove(row);
+        await _db.SaveChangesAsync();
+        return RedirectToAction(nameof(Profile));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteCertificate(int id)
+    {
+        var profile = await GetProfileAsync();
+        if (profile == null) return NotFound();
+        var row = await _db.CandidateCertificates.FirstOrDefaultAsync(x => x.Id == id && x.CandidateProfileId == profile.Id);
+        if (row == null) return NotFound();
+        _db.CandidateCertificates.Remove(row);
+        await _db.SaveChangesAsync();
+        return RedirectToAction(nameof(Profile));
+    }
+
     [HttpGet]
     public async Task<IActionResult> Jobs(JobSearchViewModel model)
     {
         ViewData["Title"] = "Job search";
         ViewBag.Section = "jobs";
+        ViewBag.Cities = StaticOptions.Cities;
 
         var q = _db.JobPostings
             .AsNoTracking()
@@ -114,12 +307,18 @@ public class CandidateController : Controller
         }
 
         if (!string.IsNullOrWhiteSpace(model.Location))
-        {
-            var loc = model.Location.Trim();
-            q = q.Where(j => j.Location.Contains(loc));
-        }
+            q = q.Where(j => j.Location == model.Location);
 
         model.Results = await q.OrderByDescending(j => j.CreatedAt).ToListAsync();
+
+        var profile = await GetProfileAsync();
+        ViewBag.AppliedJobIds = profile == null
+            ? new HashSet<int>()
+            : await _db.JobApplications
+                .Where(a => a.CandidateProfileId == profile.Id)
+                .Select(a => a.JobPostingId)
+                .ToHashSetAsync();
+
         return View(model);
     }
 
@@ -186,11 +385,16 @@ public class CandidateController : Controller
             return RedirectToAction(nameof(Applications));
         }
 
+        var cvPath = model.CvFile is { Length: > 0 }
+            ? await SaveFileAsync(model.CvFile, "uploads/cv")
+            : null;
+
         _db.JobApplications.Add(new JobApplication
         {
             JobPostingId = model.JobPostingId,
             CandidateProfileId = profile.Id,
             CoverLetter = model.CoverLetter?.Trim(),
+            CvFilePath = cvPath,
             Status = "Pending",
             AppliedAt = DateTime.UtcNow
         });
@@ -238,5 +442,19 @@ public class CandidateController : Controller
 
         ViewData["Title"] = "Application details";
         return View(app);
+    }
+
+    private async Task<string> SaveFileAsync(IFormFile file, string folderRelative)
+    {
+        var root = _env.WebRootPath;
+        var directory = Path.Combine(root, folderRelative);
+        Directory.CreateDirectory(directory);
+
+        var ext = Path.GetExtension(file.FileName);
+        var safeName = $"{Guid.NewGuid():N}{ext}";
+        var fullPath = Path.Combine(directory, safeName);
+        await using var stream = System.IO.File.Create(fullPath);
+        await file.CopyToAsync(stream);
+        return "/" + folderRelative.Replace("\\", "/") + "/" + safeName;
     }
 }

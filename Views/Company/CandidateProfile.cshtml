@@ -1,0 +1,74 @@
+@model CandidateProfile
+@{
+    ViewData["Title"] = "Candidate profile";
+}
+<div class="d-flex align-items-center gap-3 mb-4">
+    <img src="@(Model.ProfilePhotoPath ?? "/images/default-avatar.svg")" class="hrm-avatar-lg" alt="Candidate photo" />
+    <div>
+        <h1 class="h3 mb-0">@Model.FullName</h1>
+        <div class="text-secondary">@Model.Headline</div>
+    </div>
+</div>
+
+<div class="hrm-card p-4 mb-3">
+    <h2 class="h6 text-muted">Summary</h2>
+    <div class="preserve-lines">@(string.IsNullOrWhiteSpace(Model.Summary) ? "-" : Model.Summary)</div>
+    <div class="row mt-3">
+        <div class="col-md-4"><strong>Phone:</strong> @Model.Phone</div>
+        <div class="col-md-4"><strong>City:</strong> @Model.Location</div>
+    </div>
+</div>
+
+<div class="hrm-card p-4 mb-3">
+    <h2 class="h5">Education</h2>
+    @if (Model.Educations.Count == 0) { <p class="text-secondary mb-0">No education records.</p> }
+    @foreach (var e in Model.Educations.OrderByDescending(x => x.StartMonth))
+    {
+        <div class="border rounded p-2 mb-2">
+            <strong>@e.University</strong> - @e.Faculty / @e.Department
+            <div class="small text-secondary">@e.StartMonth - @(e.EndMonth ?? "Present")</div>
+        </div>
+    }
+</div>
+
+<div class="hrm-card p-4 mb-3">
+    <h2 class="h5">Experience</h2>
+    @if (Model.Experiences.Count == 0) { <p class="text-secondary mb-0">No experience records.</p> }
+    @foreach (var e in Model.Experiences.OrderByDescending(x => x.StartMonth))
+    {
+        <div class="border rounded p-2 mb-2">
+            <strong>@e.Position</strong> - @e.CompanyName
+            <div class="small text-secondary">@e.StartMonth - @(e.EndMonth ?? "Present")</div>
+            @if (!string.IsNullOrWhiteSpace(e.Description))
+            {
+                <div class="small mt-1">@e.Description</div>
+            }
+        </div>
+    }
+</div>
+
+<div class="hrm-card p-4 mb-3">
+    <h2 class="h5">Languages</h2>
+    @if (Model.Languages.Count == 0) { <p class="text-secondary mb-0">No language records.</p> }
+    @foreach (var l in Model.Languages.OrderBy(x => x.Language))
+    {
+        <span class="badge bg-secondary me-2">@l.Language - @l.Level</span>
+    }
+</div>
+
+<div class="hrm-card p-4">
+    <h2 class="h5">Certificates</h2>
+    @if (Model.Certificates.Count == 0) { <p class="text-secondary mb-0">No certificates.</p> }
+    @foreach (var c in Model.Certificates.OrderByDescending(x => x.Year))
+    {
+        <div class="border rounded p-2 mb-2">
+            <strong>@c.CertificateName</strong> - @c.Issuer (@c.Year)
+            @if (!string.IsNullOrWhiteSpace(c.CertificateLink))
+            {
+                <span>- <a href="@c.CertificateLink" target="_blank">Link</a></span>
+            }
+        </div>
+    }
+</div>
+
+<a class="btn btn-link ps-0 mt-2" asp-action="CandidatePool">Back to candidate pool</a>

@@ -15,7 +15,7 @@ public class JobPostingViewModel
     public string Description { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(200)]
+    [Display(Name = "City")]
     public string Location { get; set; } = string.Empty;
 
     [Required]

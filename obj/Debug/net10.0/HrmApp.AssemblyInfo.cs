@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HrmApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f7df21546dd827b9cbad609eff8d46924ed96f13")]
 [assembly: System.Reflection.AssemblyProductAttribute("HrmApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HrmApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

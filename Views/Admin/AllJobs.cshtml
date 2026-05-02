@@ -25,11 +25,16 @@ else
             {
                 <tr>
                     <td>@j.Title</td>
-                    <td>@j.Company.CompanyName</td>
+                    <td><a asp-controller="Companies" asp-action="Details" asp-route-id="@j.CompanyProfileId">@j.Company.CompanyName</a></td>
                     <td>@j.Location</td>
                     <td>@(j.IsActive ? "Yes" : "No")</td>
                     <td class="text-end">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="EditJob" asp-route-id="@j.Id">Edit</a>
                         <a class="btn btn-sm btn-outline-dark" asp-action="JobAdminDetails" asp-route-id="@j.Id">Details</a>
+                        <form class="d-inline" asp-action="DeleteJob" asp-route-id="@j.Id" method="post" onsubmit="return confirm('Delete this job posting?');">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                        </form>
                     </td>
                 </tr>
             }

@@ -8,12 +8,18 @@
     <link rel="stylesheet" href="~/css/hrm-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HrmApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 <body class="hrm-body">
+    @inject UserManager<ApplicationUser> UserManager
+    @{
+        var currentUser = await UserManager.GetUserAsync(User);
+        var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "Admin";
+    }
     <nav class="navbar navbar-dark hrm-navbar">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1 fs-5">HRM &mdash; System admin</span>
-            <span class="navbar-text text-white-50 small">@User.Identity?.Name</span>
+            <span class="navbar-text text-white-50 small">@displayName</span>
         </div>
     </nav>
     <div class="container-fluid">
@@ -21,9 +27,9 @@
             <aside class="col-md-3 col-lg-2 hrm-sidebar">
                 <div class="hrm-sidebar-brand">Administration</div>
                 <nav class="nav flex-column">
-                    <a class="nav-link @(ViewBag.Section as string == "dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
-                    <a class="nav-link @(ViewBag.Section as string == "users" ? "active" : "")" asp-controller="Admin" asp-action="Users">All users</a>
-                    <a class="nav-link @(ViewBag.Section as string == "jobs" ? "active" : "")" asp-controller="Admin" asp-action="AllJobs">All job postings</a>
+                    <a class="nav-link @(ViewBag.Section as string == "dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a class="nav-link @(ViewBag.Section as string == "users" ? "active" : "")" asp-controller="Admin" asp-action="Users"><i class="bi bi-people-fill me-2"></i>All users</a>
+                    <a class="nav-link @(ViewBag.Section as string == "jobs" ? "active" : "")" asp-controller="Admin" asp-action="AllJobs"><i class="bi bi-briefcase-fill me-2"></i>All job postings</a>
                 </nav>
                 <div class="mt-4 px-3">
                     <form asp-controller="Account" asp-action="Logout" method="post">

@@ -6,7 +6,7 @@
 <div class="hrm-card p-4 col-lg-8">
     <p class="mb-2"><strong>@Model.JobTitle</strong></p>
     <p class="text-secondary small mb-4">@Model.CompanyName</p>
-    <form asp-action="Apply" method="post">
+    <form asp-action="Apply" method="post" enctype="multipart/form-data">
         <input type="hidden" asp-for="JobPostingId" />
         <input type="hidden" asp-for="JobTitle" />
         <input type="hidden" asp-for="CompanyName" />
@@ -15,6 +15,11 @@
             <label asp-for="CoverLetter" class="form-label"></label>
             <textarea asp-for="CoverLetter" class="form-control" rows="5"></textarea>
             <span asp-validation-for="CoverLetter" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="CvFile" class="form-label"></label>
+            <input asp-for="CvFile" class="form-control" accept=".pdf,.doc,.docx" />
+            <span asp-validation-for="CvFile" class="text-danger small"></span>
         </div>
         <button type="submit" class="btn hrm-btn-primary">Submit application</button>
         <a class="btn btn-link" asp-action="Jobs">Cancel</a>

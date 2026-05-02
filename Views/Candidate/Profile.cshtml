@@ -1,39 +1,210 @@
-@model CandidateProfileViewModel
+@model CandidateProfilePageViewModel
 @{
     ViewData["Title"] = "My profile";
+    var cities = (IEnumerable<string>)ViewBag.Cities;
+    var universities = (IEnumerable<string>)ViewBag.Universities;
+    var faculties = (IEnumerable<string>)ViewBag.Faculties;
+    var languageLevels = (IEnumerable<string>)ViewBag.LanguageLevels;
 }
-<h1 class="h3 mb-4">My profile</h1>
-<div class="hrm-card p-4 col-lg-8">
-    <form asp-action="Profile" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
-        <div class="mb-3">
-            <label asp-for="FullName" class="form-label"></label>
-            <input asp-for="FullName" class="form-control" />
-            <span asp-validation-for="FullName" class="text-danger small"></span>
+<h1 class="h3 mb-4 hrm-section-title">My profile</h1>
+<ul class="nav nav-pills mb-3 hrm-profile-pills" id="profileTabs" role="tablist">
+    <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#step-basic" type="button">1. Basic</button></li>
+    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#step-education" type="button">2. Education</button></li>
+    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#step-experience" type="button">3. Experience</button></li>
+    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#step-languages" type="button">4. Languages</button></li>
+    <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#step-certificates" type="button">5. Certificates</button></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="step-basic">
+        <div class="hrm-card p-4 col-lg-8 hrm-step-border">
+            <form asp-action="Profile" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+                <div class="mb-3">
+                    <img src="@(Model.Profile.ExistingPhotoPath ?? "/images/default-avatar.svg")" class="hrm-avatar-lg mb-2" alt="Profile photo" />
+                    <label asp-for="Profile.ProfilePhoto" class="form-label"></label>
+                    <input asp-for="Profile.ProfilePhoto" class="form-control" accept="image/*" />
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Profile.FullName" class="form-label"></label>
+                    <input asp-for="Profile.FullName" class="form-control" />
+                    <span asp-validation-for="Profile.FullName" class="text-danger small"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Profile.Headline" class="form-label"></label>
+                    <input asp-for="Profile.Headline" class="form-control" />
+                    <span asp-validation-for="Profile.Headline" class="text-danger small"></span>
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Profile.Summary" class="form-label"></label>
+                    <textarea asp-for="Profile.Summary" class="form-control" rows="4"></textarea>
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Profile.Phone" class="form-label"></label>
+                    <input asp-for="Profile.Phone" class="form-control" />
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Profile.Location" class="form-label"></label>
+                    <select asp-for="Profile.Location" class="form-select">
+                        <option value="">Select city</option>
+                        @foreach (var city in cities)
+                        {
+                            <option value="@city">@city</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn hrm-btn-primary">Save changes</button>
+            </form>
+            <hr />
+            <form asp-controller="Account" asp-action="DeleteMyAccount" method="post" onsubmit="return confirm('Delete your account permanently?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-danger">Delete my account</button>
+            </form>
         </div>
-        <div class="mb-3">
-            <label asp-for="Headline" class="form-label"></label>
-            <input asp-for="Headline" class="form-control" />
-            <span asp-validation-for="Headline" class="text-danger small"></span>
+    </div>
+    <div class="tab-pane fade" id="step-education">
+        <div class="hrm-card p-4 hrm-step-border">
+            <form asp-action="AddEducation" method="post" class="row g-2 mb-3">
+                @Html.AntiForgeryToken()
+                <div class="col-md-3">
+                    <select asp-for="NewEducation.University" class="form-select">
+                        <option value="">University</option>
+                        <option value="Other">Other</option>
+                        @foreach (var u in universities) { <option value="@u">@u</option> }
+                    </select>
+                </div>
+                <div class="col-md-3" id="otherUniversityWrapper" style="display:none;">
+                    <input asp-for="NewEducation.OtherUniversity" class="form-control" placeholder="Other university" />
+                    <div class="form-text">Required only when University is Other</div>
+                </div>
+                <div class="col-md-3">
+                    <select asp-for="NewEducation.Faculty" class="form-select">
+                        <option value="">Faculty</option>
+                        @foreach (var f in faculties) { <option value="@f">@f</option> }
+                    </select>
+                </div>
+                <div class="col-md-2"><input asp-for="NewEducation.Department" class="form-control" placeholder="Department" /></div>
+                <div class="col-md-2"><input asp-for="NewEducation.StartMonth" type="text" class="form-control month-picker" placeholder="YYYY-MM" /></div>
+                <div class="col-md-1">
+                    <input asp-for="NewEducation.EndMonth" type="text" class="form-control month-picker" placeholder="YYYY-MM" />
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="col-md-1"><button class="btn hrm-btn-primary w-100" type="submit">Add</button></div>
+            </form>
+            @foreach (var e in Model.Educations)
+            {
+                <div class="d-flex justify-content-between border rounded p-2 mb-2">
+                    <div><strong>@e.University</strong> - @e.Faculty / @e.Department (@e.StartMonth - @(e.EndMonth ?? "Present"))</div>
+                    <form asp-action="DeleteEducation" method="post" asp-route-id="@e.Id">@Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                </div>
+            }
         </div>
-        <div class="mb-3">
-            <label asp-for="Summary" class="form-label"></label>
-            <textarea asp-for="Summary" class="form-control" rows="4"></textarea>
-            <span asp-validation-for="Summary" class="text-danger small"></span>
+    </div>
+    <div class="tab-pane fade" id="step-experience">
+        <div class="hrm-card p-4 hrm-step-border">
+            <form asp-action="AddExperience" method="post" class="row g-2 mb-3">
+                @Html.AntiForgeryToken()
+                <div class="col-md-3"><input asp-for="NewExperience.CompanyName" class="form-control" placeholder="Company" /></div>
+                <div class="col-md-3"><input asp-for="NewExperience.Position" class="form-control" placeholder="Position" /></div>
+                <div class="col-md-2"><input asp-for="NewExperience.StartMonth" type="text" class="form-control month-picker" placeholder="YYYY-MM" /></div>
+                <div class="col-md-2">
+                    <input asp-for="NewExperience.EndMonth" type="text" class="form-control month-picker" placeholder="YYYY-MM" />
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="col-md-2"><button class="btn hrm-btn-primary w-100" type="submit">Add</button></div>
+            </form>
+            @foreach (var e in Model.Experiences)
+            {
+                <div class="d-flex justify-content-between border rounded p-2 mb-2">
+                    <div><strong>@e.Position</strong> - @e.CompanyName (@e.StartMonth - @(e.EndMonth ?? "Present"))</div>
+                    <form asp-action="DeleteExperience" method="post" asp-route-id="@e.Id">@Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                </div>
+            }
         </div>
-        <div class="mb-3">
-            <label asp-for="Phone" class="form-label"></label>
-            <input asp-for="Phone" class="form-control" />
-            <span asp-validation-for="Phone" class="text-danger small"></span>
+    </div>
+    <div class="tab-pane fade" id="step-languages">
+        <div class="hrm-card p-4 hrm-step-border">
+            <form asp-action="AddLanguage" method="post" class="row g-2 mb-3">
+                @Html.AntiForgeryToken()
+                <div class="col-md-5"><input asp-for="NewLanguage.Language" class="form-control" placeholder="Language" /></div>
+                <div class="col-md-5">
+                    <select asp-for="NewLanguage.Level" class="form-select">
+                        @foreach (var level in languageLevels) { <option value="@level">@level</option> }
+                    </select>
+                </div>
+                <div class="col-md-2"><button class="btn hrm-btn-primary w-100" type="submit">Add</button></div>
+            </form>
+            @foreach (var e in Model.Languages)
+            {
+                <div class="d-flex justify-content-between border rounded p-2 mb-2">
+                    <div><strong>@e.Language</strong> - @e.Level</div>
+                    <form asp-action="DeleteLanguage" method="post" asp-route-id="@e.Id">@Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                </div>
+            }
         </div>
-        <div class="mb-3">
-            <label asp-for="Location" class="form-label"></label>
-            <input asp-for="Location" class="form-control" />
-            <span asp-validation-for="Location" class="text-danger small"></span>
+    </div>
+    <div class="tab-pane fade" id="step-certificates">
+        <div class="hrm-card p-4 hrm-step-border">
+            <form asp-action="AddCertificate" method="post" class="row g-2 mb-3">
+                @Html.AntiForgeryToken()
+                <div class="col-md-3"><input asp-for="NewCertificate.CertificateName" class="form-control" placeholder="Certificate" /></div>
+                <div class="col-md-3"><input asp-for="NewCertificate.Issuer" class="form-control" placeholder="Issuer" /></div>
+                <div class="col-md-2"><input asp-for="NewCertificate.IssueDate" type="text" class="form-control date-picker" placeholder="YYYY-MM-DD" /></div>
+                <div class="col-md-3">
+                    <input asp-for="NewCertificate.CertificateLink" class="form-control" placeholder="https://..." />
+                    <div class="form-text">Optional</div>
+                </div>
+                <div class="col-md-1"><button class="btn hrm-btn-primary w-100" type="submit">Add</button></div>
+            </form>
+            @foreach (var e in Model.Certificates)
+            {
+                <div class="d-flex justify-content-between border rounded p-2 mb-2">
+                    <div>
+                        <strong>@e.CertificateName</strong> - @e.Issuer (@e.Year)
+                        @if (!string.IsNullOrWhiteSpace(e.CertificateLink))
+                        {
+                            <span>- <a href="@e.CertificateLink" target="_blank">Link</a></span>
+                        }
+                    </div>
+                    <form asp-action="DeleteCertificate" method="post" asp-route-id="@e.Id">@Html.AntiForgeryToken()<button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                </div>
+            }
         </div>
-        <button type="submit" class="btn hrm-btn-primary">Save changes</button>
-    </form>
+    </div>
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <script>
+        (() => {
+            const universitySelect = document.getElementById("NewEducation_University");
+            const otherUniversityWrapper = document.getElementById("otherUniversityWrapper");
+            const toggleOtherUniversity = () => {
+                if (!universitySelect || !otherUniversityWrapper) return;
+                otherUniversityWrapper.style.display = universitySelect.value === "Other" ? "block" : "none";
+            };
+            if (universitySelect) {
+                universitySelect.addEventListener("change", toggleOtherUniversity);
+                toggleOtherUniversity();
+            }
+
+            const monthPlugin = window.monthSelectPlugin ? window.monthSelectPlugin : null;
+            if (window.flatpickr && monthPlugin) {
+                flatpickr(".month-picker", {
+                    plugins: [new monthPlugin({ shorthand: true, dateFormat: "Y-m", altFormat: "F Y" })],
+                    allowInput: false
+                });
+                flatpickr(".date-picker", {
+                    dateFormat: "Y-m-d",
+                    allowInput: false
+                });
+            }
+        })();
+    </script>
 }

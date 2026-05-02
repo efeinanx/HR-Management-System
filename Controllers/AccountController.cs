@@ -149,6 +149,27 @@ public class AccountController : Controller
         return View();
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> DeleteMyAccount()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return RedirectToAction(nameof(Login));
+
+        var result = await _userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            TempData["Message"] = "Account could not be deleted.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        await _signInManager.SignOutAsync();
+        TempData["Message"] = "Your account has been deleted.";
+        return RedirectToAction(nameof(Register));
+    }
+
     private IActionResult RedirectToLocal(string? returnUrl)
     {
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

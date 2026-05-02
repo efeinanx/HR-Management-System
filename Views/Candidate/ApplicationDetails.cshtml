@@ -20,6 +20,11 @@
             <dt class="col-sm-4">Cover letter</dt>
             <dd class="col-sm-8"><pre class="mb-0 small bg-light p-2 rounded">@Model.CoverLetter</pre></dd>
         }
+        @if (!string.IsNullOrEmpty(Model.CvFilePath))
+        {
+            <dt class="col-sm-4">CV</dt>
+            <dd class="col-sm-8"><a href="@Model.CvFilePath" target="_blank">Open uploaded CV</a></dd>
+        }
     </dl>
     <a class="btn btn-outline-dark mt-3" asp-action="Applications">Back to list</a>
 </div>

@@ -15,6 +15,10 @@ public class HrmDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<CandidateProfile> CandidateProfiles => Set<CandidateProfile>();
     public DbSet<JobPosting> JobPostings => Set<JobPosting>();
     public DbSet<JobApplication> JobApplications => Set<JobApplication>();
+    public DbSet<CandidateEducation> CandidateEducations => Set<CandidateEducation>();
+    public DbSet<CandidateExperience> CandidateExperiences => Set<CandidateExperience>();
+    public DbSet<CandidateLanguage> CandidateLanguages => Set<CandidateLanguage>();
+    public DbSet<CandidateCertificate> CandidateCertificates => Set<CandidateCertificate>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -57,6 +61,38 @@ public class HrmDbContext : IdentityDbContext<ApplicationUser>
                 .OnDelete(DeleteBehavior.Cascade);
 
             e.HasIndex(a => new { a.JobPostingId, a.CandidateProfileId }).IsUnique();
+        });
+
+        builder.Entity<CandidateEducation>(e =>
+        {
+            e.HasOne(x => x.CandidateProfile)
+                .WithMany(p => p.Educations)
+                .HasForeignKey(x => x.CandidateProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CandidateExperience>(e =>
+        {
+            e.HasOne(x => x.CandidateProfile)
+                .WithMany(p => p.Experiences)
+                .HasForeignKey(x => x.CandidateProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CandidateLanguage>(e =>
+        {
+            e.HasOne(x => x.CandidateProfile)
+                .WithMany(p => p.Languages)
+                .HasForeignKey(x => x.CandidateProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CandidateCertificate>(e =>
+        {
+            e.HasOne(x => x.CandidateProfile)
+                .WithMany(p => p.Certificates)
+                .HasForeignKey(x => x.CandidateProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

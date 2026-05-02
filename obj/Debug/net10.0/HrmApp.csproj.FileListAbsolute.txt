@@ -254,7 +254,6 @@
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/scopedcss/Views/Shared/_Layout.cshtml.rz.scp.css
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/scopedcss/bundle/HrmApp.styles.css
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/scopedcss/projectbundle/HrmApp.bundle.scp.css
-/Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/rhuxoocqsp-{0}-ptddxn1qio-ptddxn1qio.gz
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/9haxqg0re9-{0}-lugek5hnai-lugek5hnai.gz
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/4453ltznfz-{0}-61n19gt1b8-61n19gt1b8.gz
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/2xs72pa5pm-{0}-fr7q2aak1r-fr7q2aak1r.gz
@@ -330,3 +329,6 @@
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/HrmApp.pdb
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/HrmApp.genruntimeconfig.cache
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/ref/HrmApp.dll
+/Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/HrmApp.sourcelink.json
+/Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/6rmtoym4ov-{0}-kab8qs080g-kab8qs080g.gz
+/Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/rhuxoocqsp-{0}-pyja142k4l-pyja142k4l.gz

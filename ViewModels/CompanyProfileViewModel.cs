@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace HrmApp.ViewModels;
 
@@ -17,4 +18,12 @@ public class CompanyProfileViewModel
 
     [Url]
     public string? Website { get; set; }
+
+    [Required]
+    [Display(Name = "City")]
+    public string Location { get; set; } = string.Empty;
+
+    public string? ExistingPhotoPath { get; set; }
+    [Display(Name = "Company logo")]
+    public IFormFile? ProfilePhoto { get; set; }
 }

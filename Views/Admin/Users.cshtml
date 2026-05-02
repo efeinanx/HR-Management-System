@@ -11,6 +11,7 @@
                 <th>Email</th>
                 <th>Display name</th>
                 <th>Roles</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +21,12 @@
                 <td>@u.Email</td>
                 <td>@u.DisplayName</td>
                 <td>@u.Roles</td>
+                <td class="text-end">
+                    <form asp-action="DeleteUser" asp-route-id="@u.Id" method="post" onsubmit="return confirm('Delete this user?');">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
         }
         </tbody>

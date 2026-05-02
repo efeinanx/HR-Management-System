@@ -85,6 +85,129 @@ namespace HrmApp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("HrmApp.Models.CandidateCertificate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CandidateProfileId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CertificateLink")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CertificateName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Issuer")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId");
+
+                    b.ToTable("CandidateCertificates");
+                });
+
+            modelBuilder.Entity("HrmApp.Models.CandidateEducation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CandidateProfileId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EndMonth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Faculty")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StartMonth")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId");
+
+                    b.ToTable("CandidateEducations");
+                });
+
+            modelBuilder.Entity("HrmApp.Models.CandidateExperience", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CandidateProfileId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EndMonth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StartMonth")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId");
+
+                    b.ToTable("CandidateExperiences");
+                });
+
+            modelBuilder.Entity("HrmApp.Models.CandidateLanguage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CandidateProfileId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateProfileId");
+
+                    b.ToTable("CandidateLanguages");
+                });
+
             modelBuilder.Entity("HrmApp.Models.CandidateProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -102,6 +225,9 @@ namespace HrmApp.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProfilePhotoPath")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Summary")
@@ -135,6 +261,12 @@ namespace HrmApp.Migrations
                     b.Property<string>("Industry")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Location")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProfilePhotoPath")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -163,6 +295,9 @@ namespace HrmApp.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CoverLetter")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CvFilePath")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("JobPostingId")
@@ -348,6 +483,50 @@ namespace HrmApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HrmApp.Models.CandidateCertificate", b =>
+                {
+                    b.HasOne("HrmApp.Models.CandidateProfile", "CandidateProfile")
+                        .WithMany("Certificates")
+                        .HasForeignKey("CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
+                });
+
+            modelBuilder.Entity("HrmApp.Models.CandidateEducation", b =>
+                {
+                    b.HasOne("HrmApp.Models.CandidateProfile", "CandidateProfile")
+                        .WithMany("Educations")
+                        .HasForeignKey("CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
+                });
+
+            modelBuilder.Entity("HrmApp.Models.CandidateExperience", b =>
+                {
+                    b.HasOne("HrmApp.Models.CandidateProfile", "CandidateProfile")
+                        .WithMany("Experiences")
+                        .HasForeignKey("CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
+                });
+
+            modelBuilder.Entity("HrmApp.Models.CandidateLanguage", b =>
+                {
+                    b.HasOne("HrmApp.Models.CandidateProfile", "CandidateProfile")
+                        .WithMany("Languages")
+                        .HasForeignKey("CandidateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CandidateProfile");
+                });
+
             modelBuilder.Entity("HrmApp.Models.CandidateProfile", b =>
                 {
                     b.HasOne("HrmApp.Models.ApplicationUser", "User")
@@ -461,6 +640,14 @@ namespace HrmApp.Migrations
             modelBuilder.Entity("HrmApp.Models.CandidateProfile", b =>
                 {
                     b.Navigation("Applications");
+
+                    b.Navigation("Certificates");
+
+                    b.Navigation("Educations");
+
+                    b.Navigation("Experiences");
+
+                    b.Navigation("Languages");
                 });
 
             modelBuilder.Entity("HrmApp.Models.CompanyProfile", b =>

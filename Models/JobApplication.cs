@@ -12,5 +12,6 @@ public class JobApplication
     /// <summary>Pending, Approved, Rejected</summary>
     public string Status { get; set; } = "Pending";
     public string? CoverLetter { get; set; }
+    public string? CvFilePath { get; set; }
     public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
 }

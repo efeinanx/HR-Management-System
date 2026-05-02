@@ -8,7 +8,7 @@ public class JobSearchViewModel
     [StringLength(200)]
     public string? Query { get; set; }
 
-    [StringLength(200)]
+    [Display(Name = "City")]
     public string? Location { get; set; }
 
     public IList<JobPosting> Results { get; set; } = new List<JobPosting>();

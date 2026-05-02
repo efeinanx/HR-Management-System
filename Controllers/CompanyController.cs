@@ -13,11 +13,13 @@ public class CompanyController : Controller
 {
     private readonly HrmDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IWebHostEnvironment _env;
 
-    public CompanyController(HrmDbContext db, UserManager<ApplicationUser> userManager)
+    public CompanyController(HrmDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
     {
         _db = db;
         _userManager = userManager;
+        _env = env;
     }
 
     private async Task<CompanyProfile?> GetProfileAsync()
@@ -25,6 +27,11 @@ public class CompanyController : Controller
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return null;
         return await _db.CompanyProfiles.FirstOrDefaultAsync(c => c.UserId == user.Id);
+    }
+
+    private void FillStaticDropdowns()
+    {
+        ViewBag.Cities = StaticOptions.Cities;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -57,6 +64,7 @@ public class CompanyController : Controller
     {
         ViewData["Title"] = "Company profile";
         ViewBag.Section = "profile";
+        FillStaticDropdowns();
 
         var company = await GetProfileAsync();
         if (company == null)
@@ -67,7 +75,9 @@ public class CompanyController : Controller
             CompanyName = company.CompanyName,
             Industry = company.Industry,
             Description = company.Description,
-            Website = company.Website
+            Website = company.Website,
+            Location = company.Location ?? string.Empty,
+            ExistingPhotoPath = company.ProfilePhotoPath
         };
         return View(vm);
     }
@@ -78,6 +88,7 @@ public class CompanyController : Controller
     {
         ViewData["Title"] = "Company profile";
         ViewBag.Section = "profile";
+        FillStaticDropdowns();
 
         if (!ModelState.IsValid)
             return View(model);
@@ -90,6 +101,9 @@ public class CompanyController : Controller
         company.Industry = model.Industry?.Trim();
         company.Description = model.Description?.Trim();
         company.Website = string.IsNullOrWhiteSpace(model.Website) ? null : model.Website.Trim();
+        company.Location = model.Location.Trim();
+        if (model.ProfilePhoto is { Length: > 0 })
+            company.ProfilePhotoPath = await SaveFileAsync(model.ProfilePhoto, "uploads/photos");
 
         var user = await _userManager.GetUserAsync(User);
         if (user != null)
@@ -126,6 +140,7 @@ public class CompanyController : Controller
     {
         ViewData["Title"] = "Create job posting";
         ViewBag.Section = "jobs";
+        FillStaticDropdowns();
         return View(new JobPostingViewModel());
     }
 
@@ -134,6 +149,7 @@ public class CompanyController : Controller
     public async Task<IActionResult> CreateJob(JobPostingViewModel model)
     {
         ViewBag.Section = "jobs";
+        FillStaticDropdowns();
 
         if (!ModelState.IsValid)
         {
@@ -150,7 +166,7 @@ public class CompanyController : Controller
             CompanyProfileId = company.Id,
             Title = model.Title.Trim(),
             Description = model.Description.Trim(),
-            Location = model.Location.Trim(),
+            Location = model.Location,
             EmploymentType = model.EmploymentType.Trim(),
             IsActive = model.IsActive,
             CreatedAt = DateTime.UtcNow
@@ -166,6 +182,7 @@ public class CompanyController : Controller
     public async Task<IActionResult> EditJob(int id)
     {
         ViewBag.Section = "jobs";
+        FillStaticDropdowns();
         var company = await GetProfileAsync();
         if (company == null)
             return NotFound();
@@ -193,6 +210,7 @@ public class CompanyController : Controller
     public async Task<IActionResult> EditJob(JobPostingViewModel model)
     {
         ViewBag.Section = "jobs";
+        FillStaticDropdowns();
 
         if (!model.Id.HasValue || !ModelState.IsValid)
         {
@@ -210,7 +228,7 @@ public class CompanyController : Controller
 
         job.Title = model.Title.Trim();
         job.Description = model.Description.Trim();
-        job.Location = model.Location.Trim();
+        job.Location = model.Location;
         job.EmploymentType = model.EmploymentType.Trim();
         job.IsActive = model.IsActive;
 
@@ -323,6 +341,39 @@ public class CompanyController : Controller
         return View(apps);
     }
 
+    public async Task<IActionResult> CandidateProfile(int id)
+    {
+        ViewBag.Section = "pool";
+        ViewData["Title"] = "Candidate profile";
+
+        var company = await GetProfileAsync();
+        if (company == null)
+            return NotFound();
+
+        var jobIds = await _db.JobPostings
+            .Where(j => j.CompanyProfileId == company.Id)
+            .Select(j => j.Id)
+            .ToListAsync();
+
+        var hasApplication = await _db.JobApplications
+            .AnyAsync(a => a.CandidateProfileId == id && jobIds.Contains(a.JobPostingId));
+        if (!hasApplication)
+            return Forbid();
+
+        var profile = await _db.CandidateProfiles
+            .AsNoTracking()
+            .Include(c => c.Educations)
+            .Include(c => c.Experiences)
+            .Include(c => c.Languages)
+            .Include(c => c.Certificates)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (profile == null)
+            return NotFound();
+
+        return View(profile);
+    }
+
     public async Task<IActionResult> ApplicationReview(int id)
     {
         ViewBag.Section = "pool";
@@ -382,5 +433,19 @@ public class CompanyController : Controller
         await _db.SaveChangesAsync();
         TempData["Message"] = "Application status updated.";
         return RedirectToAction(nameof(ApplicationReview), new { id = app.Id });
+    }
+
+    private async Task<string> SaveFileAsync(IFormFile file, string folderRelative)
+    {
+        var root = _env.WebRootPath;
+        var directory = Path.Combine(root, folderRelative);
+        Directory.CreateDirectory(directory);
+
+        var ext = Path.GetExtension(file.FileName);
+        var safeName = $"{Guid.NewGuid():N}{ext}";
+        var fullPath = Path.Combine(directory, safeName);
+        await using var stream = System.IO.File.Create(fullPath);
+        await file.CopyToAsync(stream);
+        return "/" + folderRelative.Replace("\\", "/") + "/" + safeName;
     }
 }

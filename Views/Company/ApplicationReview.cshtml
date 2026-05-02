@@ -14,6 +14,11 @@
             <h2 class="h6 text-muted">Job</h2>
             <p class="mb-0">@app.JobPosting?.Title</p>
             <p class="small text-secondary">Applied @app.AppliedAt.ToLocalTime().ToString("g")</p>
+            @if (!string.IsNullOrWhiteSpace(app.CvFilePath))
+            {
+                <p class="small mb-1"><a href="@app.CvFilePath" target="_blank">View candidate CV</a></p>
+            }
+            <p class="small mb-0"><a asp-action="CandidateProfile" asp-route-id="@app.CandidateProfileId">Open full candidate profile</a></p>
             @if (!string.IsNullOrEmpty(app.CoverLetter))
             {
                 <h2 class="h6 text-muted mt-3">Cover letter</h2>

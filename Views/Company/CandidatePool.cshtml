@@ -16,6 +16,7 @@ else
                     <th>Candidate</th>
                     <th>Job</th>
                     <th>Applied</th>
+                    <th>CV</th>
                     <th>Status</th>
                     <th></th>
                 </tr>
@@ -24,9 +25,19 @@ else
             @foreach (var a in Model)
             {
                 <tr>
-                    <td>@a.Candidate?.FullName</td>
+                    <td><a asp-action="CandidateProfile" asp-route-id="@a.CandidateProfileId">@a.Candidate?.FullName</a></td>
                     <td>@a.JobPosting?.Title</td>
                     <td>@a.AppliedAt.ToLocalTime().ToString("d")</td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(a.CvFilePath))
+                        {
+                            <a href="@a.CvFilePath" target="_blank">View CV</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
                     <td><span class="badge bg-secondary">@a.Status</span></td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-dark" asp-action="ApplicationReview" asp-route-id="@a.Id">Review</a>

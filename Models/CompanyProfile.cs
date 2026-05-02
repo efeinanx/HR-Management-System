@@ -10,6 +10,8 @@ public class CompanyProfile
     public string? Industry { get; set; }
     public string? Description { get; set; }
     public string? Website { get; set; }
+    public string? Location { get; set; }
+    public string? ProfilePhotoPath { get; set; }
 
     public ICollection<JobPosting> JobPostings { get; set; } = new List<JobPosting>();
 }

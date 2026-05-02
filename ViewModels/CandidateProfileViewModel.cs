@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace HrmApp.ViewModels;
 
@@ -20,4 +21,7 @@ public class CandidateProfileViewModel
 
     [StringLength(200)]
     public string? Location { get; set; }
+
+    public string? ExistingPhotoPath { get; set; }
+    public IFormFile? ProfilePhoto { get; set; }
 }

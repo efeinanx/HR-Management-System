@@ -89,4 +89,77 @@ public class AdminController : Controller
         ViewData["Title"] = job.Title;
         return View(job);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> EditJob(int id)
+    {
+        ViewBag.Section = "jobs";
+        ViewBag.Cities = StaticOptions.Cities;
+        var job = await _db.JobPostings.FirstOrDefaultAsync(j => j.Id == id);
+        if (job == null) return NotFound();
+
+        var vm = new JobPostingViewModel
+        {
+            Id = job.Id,
+            Title = job.Title,
+            Description = job.Description,
+            Location = job.Location,
+            EmploymentType = job.EmploymentType,
+            IsActive = job.IsActive
+        };
+        return View(vm);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditJob(JobPostingViewModel model)
+    {
+        ViewBag.Section = "jobs";
+        ViewBag.Cities = StaticOptions.Cities;
+        if (!model.Id.HasValue || !ModelState.IsValid)
+            return View(model);
+
+        var job = await _db.JobPostings.FirstOrDefaultAsync(j => j.Id == model.Id.Value);
+        if (job == null) return NotFound();
+
+        job.Title = model.Title.Trim();
+        job.Description = model.Description.Trim();
+        job.Location = model.Location;
+        job.EmploymentType = model.EmploymentType.Trim();
+        job.IsActive = model.IsActive;
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Job posting updated by admin.";
+        return RedirectToAction(nameof(JobAdminDetails), new { id = job.Id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteJob(int id)
+    {
+        var job = await _db.JobPostings.FirstOrDefaultAsync(j => j.Id == id);
+        if (job == null) return NotFound();
+        _db.JobPostings.Remove(job);
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Job posting deleted by admin.";
+        return RedirectToAction(nameof(AllJobs));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null) return NotFound();
+
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser != null && currentUser.Id == user.Id)
+        {
+            TempData["Message"] = "You cannot delete your own admin account.";
+            return RedirectToAction(nameof(Users));
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+        TempData["Message"] = result.Succeeded ? "User deleted." : "User could not be deleted.";
+        return RedirectToAction(nameof(Users));
+    }
 }

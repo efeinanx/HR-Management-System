@@ -1,11 +1,17 @@
 @model CompanyProfileViewModel
 @{
     ViewData["Title"] = "Company profile";
+    var cities = (IEnumerable<string>)ViewBag.Cities;
 }
 <h1 class="h3 mb-4">Company profile</h1>
 <div class="hrm-card p-4 col-lg-8">
-    <form asp-action="Profile" method="post">
+    <form asp-action="Profile" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+        <div class="mb-3">
+            <img src="@(Model.ExistingPhotoPath ?? "/images/default-avatar.svg")" class="hrm-avatar-lg mb-2" alt="Company logo" />
+            <label asp-for="ProfilePhoto" class="form-label"></label>
+            <input asp-for="ProfilePhoto" class="form-control" accept="image/*" />
+        </div>
         <div class="mb-3">
             <label asp-for="CompanyName" class="form-label"></label>
             <input asp-for="CompanyName" class="form-control" />
@@ -26,7 +32,23 @@
             <input asp-for="Website" class="form-control" placeholder="https://" />
             <span asp-validation-for="Website" class="text-danger small"></span>
         </div>
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label"></label>
+            <select asp-for="Location" class="form-select">
+                <option value="">Select city</option>
+                @foreach (var city in cities)
+                {
+                    <option value="@city">@city</option>
+                }
+            </select>
+            <span asp-validation-for="Location" class="text-danger small"></span>
+        </div>
         <button type="submit" class="btn hrm-btn-primary">Save changes</button>
+    </form>
+    <hr />
+    <form asp-controller="Account" asp-action="DeleteMyAccount" method="post" onsubmit="return confirm('Delete your company account permanently?');">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-outline-danger">Delete company account</button>
     </form>
 </div>
 @section Scripts {

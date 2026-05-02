@@ -8,12 +8,23 @@
     <link rel="stylesheet" href="~/css/hrm-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HrmApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 <body class="hrm-body">
+    @inject UserManager<ApplicationUser> UserManager
+    @inject HrmDbContext Db
+    @{
+        var currentUser = await UserManager.GetUserAsync(User);
+        var displayName = currentUser?.DisplayName ?? User.Identity?.Name ?? "User";
+        var photoPath = currentUser == null ? null : await Db.CompanyProfiles.Where(x => x.UserId == currentUser.Id).Select(x => x.ProfilePhotoPath).FirstOrDefaultAsync();
+    }
     <nav class="navbar navbar-dark hrm-navbar">
-        <div class="container-fluid">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
             <span class="navbar-brand mb-0 h1 fs-5">HRM &mdash; Company</span>
-            <span class="navbar-text text-white-50 small">@User.Identity?.Name</span>
+            <div class="d-flex align-items-center gap-2">
+                <img src="@(photoPath ?? "/images/default-avatar.svg")" class="hrm-avatar-sm" alt="Profile photo" />
+                <span class="navbar-text text-white-50 small">@displayName</span>
+            </div>
         </div>
     </nav>
     <div class="container-fluid">
@@ -21,12 +32,12 @@
             <aside class="col-md-3 col-lg-2 hrm-sidebar">
                 <div class="hrm-sidebar-brand">HR workspace</div>
                 <nav class="nav flex-column">
-                    <a class="nav-link @(ViewBag.Section as string == "dashboard" ? "active" : "")" asp-controller="Company" asp-action="Dashboard">Dashboard</a>
-                    <a class="nav-link @(ViewBag.Section as string == "profile" ? "active" : "")" asp-controller="Company" asp-action="Profile">Company profile</a>
-                    <a class="nav-link @(ViewBag.Section as string == "jobs" ? "active" : "")" asp-controller="Company" asp-action="JobPostings">My job postings</a>
-                    <a class="nav-link @(ViewBag.Section as string == "pool" ? "active" : "")" asp-controller="Company" asp-action="CandidatePool">Candidate pool</a>
-                    <a class="nav-link @(ViewBag.Section as string == "pending" ? "active" : "")" asp-controller="Company" asp-action="PendingApplications">Pending applications</a>
-                    <a class="nav-link @(ViewBag.Section as string == "approved" ? "active" : "")" asp-controller="Company" asp-action="ApprovedCandidates">Approved candidates</a>
+                    <a class="nav-link @(ViewBag.Section as string == "dashboard" ? "active" : "")" asp-controller="Company" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                    <a class="nav-link @(ViewBag.Section as string == "profile" ? "active" : "")" asp-controller="Company" asp-action="Profile"><i class="bi bi-building me-2"></i>Company profile</a>
+                    <a class="nav-link @(ViewBag.Section as string == "jobs" ? "active" : "")" asp-controller="Company" asp-action="JobPostings"><i class="bi bi-card-checklist me-2"></i>My job postings</a>
+                    <a class="nav-link @(ViewBag.Section as string == "pool" ? "active" : "")" asp-controller="Company" asp-action="CandidatePool"><i class="bi bi-people me-2"></i>Candidate pool</a>
+                    <a class="nav-link @(ViewBag.Section as string == "pending" ? "active" : "")" asp-controller="Company" asp-action="PendingApplications"><i class="bi bi-hourglass-split me-2"></i>Pending applications</a>
+                    <a class="nav-link @(ViewBag.Section as string == "approved" ? "active" : "")" asp-controller="Company" asp-action="ApprovedCandidates"><i class="bi bi-patch-check me-2"></i>Approved candidates</a>
                 </nav>
                 <div class="mt-4 px-3">
                     <form asp-controller="Account" asp-action="Logout" method="post">
