@@ -86,7 +86,7 @@ public class CandidateController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Profile(CandidateProfilePageViewModel page)
+    public async Task<IActionResult> Profile([Bind(Prefix = "Profile")] CandidateProfileViewModel model)
     {
         ViewData["Title"] = "My profile";
         ViewBag.Section = "profile";
@@ -94,8 +94,6 @@ public class CandidateController : Controller
 
         if (!ModelState.IsValid)
             return await Profile();
-
-        var model = page.Profile;
         var profile = await GetProfileAsync();
         if (profile == null)
             return NotFound();
@@ -123,12 +121,10 @@ public class CandidateController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddEducation(CandidateProfilePageViewModel page)
+    public async Task<IActionResult> AddEducation([Bind(Prefix = "NewEducation")] CandidateEducationViewModel e)
     {
         var profile = await GetProfileAsync();
         if (profile == null) return NotFound();
-
-        var e = page.NewEducation;
         var university = e.University == "Other" ? e.OtherUniversity : e.University;
         if (string.IsNullOrWhiteSpace(university) || string.IsNullOrWhiteSpace(e.Faculty) || string.IsNullOrWhiteSpace(e.Department) || string.IsNullOrWhiteSpace(e.StartMonth))
         {
@@ -152,12 +148,10 @@ public class CandidateController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddExperience(CandidateProfilePageViewModel page)
+    public async Task<IActionResult> AddExperience([Bind(Prefix = "NewExperience")] CandidateExperienceViewModel x)
     {
         var profile = await GetProfileAsync();
         if (profile == null) return NotFound();
-
-        var x = page.NewExperience;
         if (string.IsNullOrWhiteSpace(x.CompanyName) || string.IsNullOrWhiteSpace(x.Position) || string.IsNullOrWhiteSpace(x.StartMonth))
         {
             TempData["Message"] = "Experience fields are required.";
@@ -180,12 +174,10 @@ public class CandidateController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddLanguage(CandidateProfilePageViewModel page)
+    public async Task<IActionResult> AddLanguage([Bind(Prefix = "NewLanguage")] CandidateLanguageViewModel l)
     {
         var profile = await GetProfileAsync();
         if (profile == null) return NotFound();
-
-        var l = page.NewLanguage;
         if (string.IsNullOrWhiteSpace(l.Language))
         {
             TempData["Message"] = "Language is required.";
@@ -205,12 +197,10 @@ public class CandidateController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddCertificate(CandidateProfilePageViewModel page)
+    public async Task<IActionResult> AddCertificate([Bind(Prefix = "NewCertificate")] CandidateCertificateViewModel c)
     {
         var profile = await GetProfileAsync();
         if (profile == null) return NotFound();
-
-        var c = page.NewCertificate;
         if (string.IsNullOrWhiteSpace(c.CertificateName) || string.IsNullOrWhiteSpace(c.Issuer) || string.IsNullOrWhiteSpace(c.IssueDate))
         {
             TempData["Message"] = "Certificate fields are required.";
