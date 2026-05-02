@@ -1,0 +1,27 @@
+@model IList<AdminUserListItemViewModel>
+@{
+    ViewData["Title"] = "All users";
+}
+<h1 class="h3 mb-2">@ViewData["Title"]</h1>
+<p class="text-secondary mb-4">@ViewData["ListDescription"]</p>
+<div class="table-responsive hrm-card">
+    <table class="table table-hover mb-0 hrm-table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Display name</th>
+                <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>@u.DisplayName</td>
+                <td>@u.Roles</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

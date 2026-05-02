@@ -1,0 +1,39 @@
+@model CandidateProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+}
+<h1 class="h3 mb-4">My profile</h1>
+<div class="hrm-card p-4 col-lg-8">
+    <form asp-action="Profile" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Headline" class="form-label"></label>
+            <input asp-for="Headline" class="form-control" />
+            <span asp-validation-for="Headline" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Summary" class="form-label"></label>
+            <textarea asp-for="Summary" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Summary" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label"></label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger small"></span>
+        </div>
+        <button type="submit" class="btn hrm-btn-primary">Save changes</button>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

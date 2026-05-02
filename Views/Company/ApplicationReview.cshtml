@@ -1,0 +1,47 @@
+@model UpdateApplicationStatusViewModel
+@{
+    ViewData["Title"] = "Review application";
+    var app = (JobApplication)ViewBag.Application!;
+}
+<h1 class="h3 mb-4">Review application</h1>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="hrm-card p-4">
+            <h2 class="h6 text-muted">Candidate</h2>
+            <p class="mb-1 fw-semibold">@app.Candidate?.FullName</p>
+            <p class="small text-secondary mb-0">@app.Candidate?.Headline</p>
+            <hr />
+            <h2 class="h6 text-muted">Job</h2>
+            <p class="mb-0">@app.JobPosting?.Title</p>
+            <p class="small text-secondary">Applied @app.AppliedAt.ToLocalTime().ToString("g")</p>
+            @if (!string.IsNullOrEmpty(app.CoverLetter))
+            {
+                <h2 class="h6 text-muted mt-3">Cover letter</h2>
+                <pre class="small bg-light p-3 rounded mb-0">@app.CoverLetter</pre>
+            }
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="hrm-card p-4">
+            <h2 class="h6 mb-3">Decision</h2>
+            <form asp-action="ApplicationReview" method="post">
+                <input type="hidden" asp-for="ApplicationId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger small"></span>
+                </div>
+                <button type="submit" class="btn hrm-btn-primary w-100">Update status</button>
+            </form>
+            <a class="btn btn-link w-100 mt-2" asp-action="CandidatePool">Back to pool</a>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

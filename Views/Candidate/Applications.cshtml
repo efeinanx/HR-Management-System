@@ -1,0 +1,50 @@
+@model IList<JobApplication>
+@{
+    ViewData["Title"] = "My applications";
+}
+<h1 class="h3 mb-4">My applications</h1>
+@if (Model.Count == 0)
+{
+    <p class="text-secondary">You have not applied to any jobs yet. <a asp-action="Jobs">Browse openings</a>.</p>
+}
+else
+{
+    <div class="table-responsive hrm-card">
+        <table class="table table-hover mb-0 hrm-table">
+            <thead>
+                <tr>
+                    <th>Job</th>
+                    <th>Company</th>
+                    <th>Applied</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.JobPosting?.Title</td>
+                    <td>@a.JobPosting?.Company.CompanyName</td>
+                    <td>@a.AppliedAt.ToLocalTime().ToString("d")</td>
+                    <td>
+                        <span class="badge @StatusClass(a.Status)">@a.Status</span>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-dark" asp-action="ApplicationDetails" asp-route-id="@a.Id">Details</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@functions {
+    string StatusClass(string status) => status switch
+    {
+        "Approved" => "hrm-badge-approved",
+        "Rejected" => "hrm-badge-rejected",
+        _ => "hrm-badge-pending"
+    };
+}

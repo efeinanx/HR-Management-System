@@ -1,0 +1,12 @@
+@model JobPosting
+@{
+    ViewData["Title"] = Model.Title;
+}
+<h1 class="h3">@Model.Title</h1>
+<p class="text-secondary">@Model.Company.CompanyName &middot; @Model.Location</p>
+<div class="hrm-card p-4 mb-4">
+    <p class="small text-muted mb-1">Description</p>
+    <div class="preserve-lines">@Model.Description</div>
+</div>
+<p class="fw-semibold">Total applications: @Model.Applications.Count</p>
+<a class="btn btn-link ps-0" asp-action="AllJobs">Back</a>

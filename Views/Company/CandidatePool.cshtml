@@ -1,0 +1,39 @@
+@model IList<JobApplication>
+@{
+    ViewData["Title"] = "Candidate pool";
+}
+<h1 class="h3 mb-4">Candidate pool</h1>
+@if (Model.Count == 0)
+{
+    <p class="text-secondary">No applications to any of your listings yet.</p>
+}
+else
+{
+    <div class="table-responsive hrm-card">
+        <table class="table table-hover mb-0 hrm-table">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Job</th>
+                    <th>Applied</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.Candidate?.FullName</td>
+                    <td>@a.JobPosting?.Title</td>
+                    <td>@a.AppliedAt.ToLocalTime().ToString("d")</td>
+                    <td><span class="badge bg-secondary">@a.Status</span></td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-dark" asp-action="ApplicationReview" asp-route-id="@a.Id">Review</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

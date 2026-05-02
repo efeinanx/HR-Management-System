@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h1 class="h3 mb-4">Hello, @ViewBag.WelcomeName</h1>
+<p class="text-secondary mb-4">@ViewData["DashboardSubtitle"]</p>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="hrm-card p-3 hrm-stat">
+            <div class="text-muted small">Your applications</div>
+            <div class="display-6 fw-semibold">@ViewBag.ApplicationCount</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="hrm-card p-3 hrm-stat">
+            <div class="text-muted small">Open jobs (platform)</div>
+            <div class="display-6 fw-semibold">@ViewBag.ActiveJobsCount</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="hrm-card p-3 d-flex flex-column justify-content-center">
+            <a class="btn hrm-btn-primary" asp-action="Jobs">Search jobs</a>
+            <a class="btn btn-outline-dark mt-2" asp-action="Applications">View applications</a>
+        </div>
+    </div>
+</div>

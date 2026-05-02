@@ -1,0 +1,54 @@
+@model JobSearchViewModel
+@{
+    ViewData["Title"] = "Job search";
+}
+<h1 class="h3 mb-3">Job search</h1>
+<form method="get" class="hrm-card p-3 mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label asp-for="Query" class="form-label small text-muted mb-1">Keywords</label>
+            <input asp-for="Query" class="form-control" placeholder="Title or description" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Location" class="form-label small text-muted mb-1">Location</label>
+            <input asp-for="Location" class="form-control" placeholder="City or remote" />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn hrm-btn-primary w-100">Search</button>
+        </div>
+    </div>
+</form>
+@if (Model.Results.Count == 0)
+{
+    <p class="text-secondary">No jobs match your filters.</p>
+}
+else
+{
+    <div class="table-responsive hrm-card">
+        <table class="table table-hover mb-0 hrm-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Company</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var j in Model.Results)
+            {
+                <tr>
+                    <td>@j.Title</td>
+                    <td>@j.Company.CompanyName</td>
+                    <td>@j.Location</td>
+                    <td>@j.EmploymentType</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-dark" asp-action="Apply" asp-route-id="@j.Id">Apply</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HRM Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/hrm-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HrmApp.styles.css" asp-append-version="true" />
+</head>
+<body class="hrm-body d-flex flex-column">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark hrm-navbar border-bottom mb-0">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">HRM Portal</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item"><span class="nav-link disabled">@User.Identity.Name</span></li>
+                            <li class="nav-item">
+                                <form class="d-inline" asp-controller="Account" asp-action="Logout" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link nav-link text-decoration-none border-0 p-0 ps-2">Sign out</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Sign in</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main role="main" class="flex-grow-1">
+        <div class="container py-4">
+            @if (TempData["Message"] is string flash && !string.IsNullOrEmpty(flash))
+            {
+                <div class="alert alert-success border-0 hrm-card" role="alert">@flash</div>
+            }
+            @RenderBody()
+        </div>
+    </main>
+    <footer class="hrm-footer py-3 mt-auto">
+        <div class="container small">
+            &copy; @DateTime.UtcNow.Year HRM Portal &mdash;
+            <a class="link-light text-decoration-none" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

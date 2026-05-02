@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h1 class="h3 mb-2">@ViewBag.CompanyName</h1>
+<p class="text-secondary mb-4">@ViewData["CompanyDashboardHint"]</p>
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="hrm-card p-3 hrm-stat">
+            <div class="text-muted small">Active listings</div>
+            <div class="display-6 fw-semibold">@ViewBag.ActiveJobs</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="hrm-card p-3 hrm-stat">
+            <div class="text-muted small">Total applications</div>
+            <div class="display-6 fw-semibold">@ViewBag.TotalApplications</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="hrm-card p-3 hrm-stat">
+            <div class="text-muted small">Pending review</div>
+            <div class="display-6 fw-semibold">@ViewBag.PendingApplications</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="hrm-card p-3 hrm-stat">
+            <div class="text-muted small">Approved</div>
+            <div class="display-6 fw-semibold">@ViewBag.ApprovedApplications</div>
+        </div>
+    </div>
+</div>
+<div class="mt-4 d-flex flex-wrap gap-2">
+    <a class="btn hrm-btn-primary" asp-action="CreateJob">New job posting</a>
+    <a class="btn btn-outline-dark" asp-action="PendingApplications">Review pending</a>
+</div>

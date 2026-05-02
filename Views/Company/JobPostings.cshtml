@@ -1,0 +1,43 @@
+@model IList<JobPosting>
+@{
+    ViewData["Title"] = "My job postings";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">My job postings</h1>
+    <a class="btn hrm-btn-primary" asp-action="CreateJob">Create</a>
+</div>
+@if (Model.Count == 0)
+{
+    <p class="text-secondary">No listings yet. <a asp-action="CreateJob">Create your first job posting</a>.</p>
+}
+else
+{
+    <div class="table-responsive hrm-card">
+        <table class="table table-hover mb-0 hrm-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Posted</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var j in Model)
+            {
+                <tr>
+                    <td>@j.Title</td>
+                    <td>@j.Location</td>
+                    <td>@(j.IsActive ? "Active" : "Inactive")</td>
+                    <td>@j.CreatedAt.ToLocalTime().ToString("d")</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-dark" asp-action="JobDetails" asp-route-id="@j.Id">Details</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="EditJob" asp-route-id="@j.Id">Edit</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

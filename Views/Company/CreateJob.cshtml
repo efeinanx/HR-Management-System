@@ -1,0 +1,16 @@
+@model JobPostingViewModel
+@{
+    ViewData["Title"] = "Create job posting";
+}
+<h1 class="h3 mb-4">Create job posting</h1>
+<div class="hrm-card p-4 col-lg-10">
+    <form asp-action="CreateJob" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+        <partial name="_JobPostingForm" model="Model" />
+        <button type="submit" class="btn hrm-btn-primary">Publish</button>
+        <a class="btn btn-link" asp-action="JobPostings">Cancel</a>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

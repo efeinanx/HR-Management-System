@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/hrm-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HrmApp.styles.css" asp-append-version="true" />
+</head>
+<body class="hrm-body">
+    <nav class="navbar navbar-dark hrm-navbar">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 fs-5">HRM &mdash; System admin</span>
+            <span class="navbar-text text-white-50 small">@User.Identity?.Name</span>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row g-0">
+            <aside class="col-md-3 col-lg-2 hrm-sidebar">
+                <div class="hrm-sidebar-brand">Administration</div>
+                <nav class="nav flex-column">
+                    <a class="nav-link @(ViewBag.Section as string == "dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
+                    <a class="nav-link @(ViewBag.Section as string == "users" ? "active" : "")" asp-controller="Admin" asp-action="Users">All users</a>
+                    <a class="nav-link @(ViewBag.Section as string == "jobs" ? "active" : "")" asp-controller="Admin" asp-action="AllJobs">All job postings</a>
+                </nav>
+                <div class="mt-4 px-3">
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-light w-100 btn-sm">Sign out</button>
+                    </form>
+                </div>
+            </aside>
+            <div class="col-md-9 col-lg-10 hrm-main-panel">
+                @if (TempData["Message"] is string flash && !string.IsNullOrEmpty(flash))
+                {
+                    <div class="alert alert-success border-0 hrm-card" role="alert">@flash</div>
+                }
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+}
+<div class="row align-items-center py-5">
+    <div class="col-lg-7">
+        <h1 class="display-5 fw-bold mb-3" style="color: var(--hrm-green);">Human resources, simplified</h1>
+        <p class="lead text-secondary mb-4">
+            Candidates explore roles and track applications. HR teams publish listings, review talent, and move hires forward &mdash; with a clear dashboard for every role.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn hrm-btn-primary btn-lg" asp-controller="Account" asp-action="Login">Sign in</a>
+            <a class="btn btn-outline-dark btn-lg" asp-controller="Account" asp-action="Register">Create account</a>
+        </div>
+        <p class="small text-muted mt-4 mb-0">
+            Demo admin: <strong>admin@hrmapp.local</strong> / <strong>Admin123!</strong>
+        </p>
+    </div>
+    <div class="col-lg-5 mt-4 mt-lg-0">
+        <div class="hrm-card p-4">
+            <h2 class="h5 mb-3">Who uses this portal?</h2>
+            <ul class="list-unstyled mb-0">
+                <li class="mb-2"><span class="badge hrm-badge-approved me-2">Candidate</span> Search jobs, apply, manage profile</li>
+                <li class="mb-2"><span class="badge bg-dark me-2">Company</span> Post roles, review applicants, approve candidates</li>
+                <li><span class="badge hrm-badge-pending me-2">Admin</span> Overview of users and listings</li>
+            </ul>
+        </div>
+    </div>
+</div>

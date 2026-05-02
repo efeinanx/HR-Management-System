@@ -1,0 +1,25 @@
+@model JobApplication
+@{
+    ViewData["Title"] = "Application details";
+}
+<h1 class="h3 mb-4">Application details</h1>
+<div class="hrm-card p-4 col-lg-8">
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Job</dt>
+        <dd class="col-sm-8">@Model.JobPosting?.Title</dd>
+        <dt class="col-sm-4">Company</dt>
+        <dd class="col-sm-8">@Model.JobPosting?.Company.CompanyName</dd>
+        <dt class="col-sm-4">Location</dt>
+        <dd class="col-sm-8">@Model.JobPosting?.Location</dd>
+        <dt class="col-sm-4">Applied</dt>
+        <dd class="col-sm-8">@Model.AppliedAt.ToLocalTime().ToString("g")</dd>
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Status</span></dd>
+        @if (!string.IsNullOrEmpty(Model.CoverLetter))
+        {
+            <dt class="col-sm-4">Cover letter</dt>
+            <dd class="col-sm-8"><pre class="mb-0 small bg-light p-2 rounded">@Model.CoverLetter</pre></dd>
+        }
+    </dl>
+    <a class="btn btn-outline-dark mt-3" asp-action="Applications">Back to list</a>
+</div>
