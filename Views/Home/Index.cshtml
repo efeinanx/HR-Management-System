@@ -1,28 +1,87 @@
-﻿@{
-    ViewData["Title"] = "Welcome";
+﻿@model JobSearchViewModel
+@{
+    ViewData["Title"] = "Discover opportunities";
+    ViewData["FullWidthMain"] = true;
+    var cities = (IEnumerable<string>)ViewBag.Cities!;
 }
-<div class="row align-items-center py-5">
-    <div class="col-lg-7">
-        <h1 class="display-5 fw-bold mb-3" style="color: var(--hrm-green);">Human resources, simplified</h1>
-        <p class="lead text-secondary mb-4">
-            Candidates explore roles and track applications. HR teams publish listings, review talent, and move hires forward &mdash; with a clear dashboard for every role.
+<section class="bey-hero text-center text-lg-start">
+    <div class="container bey-hero-inner">
+        <p class="bey-eyebrow mb-2">BEY HR — Talent meets opportunity</p>
+        <h1 class="bey-hero-title display-4 fw-bold mb-3">Discover career opportunities that fit you</h1>
+        <p class="bey-hero-lead lead text-secondary mb-4 mb-lg-5 col-lg-9">
+            Search open roles by keyword, title, or company — filter by city and explore live listings before you sign up.
         </p>
-        <div class="d-flex flex-wrap gap-2">
-            <a class="btn hrm-btn-primary btn-lg" asp-controller="Account" asp-action="Login">Sign in</a>
-            <a class="btn btn-outline-dark btn-lg" asp-controller="Account" asp-action="Register">Create account</a>
-        </div>
+
+        <form method="get" asp-action="Index" asp-controller="Home" class="bey-search-shell hrm-card p-3 p-md-4 mb-4">
+            <div class="row g-3 align-items-stretch">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted mb-1" for="Query">Role, company, or keyword</label>
+                    <input asp-for="Query" class="form-control form-control-lg bey-input" id="Query" placeholder="e.g. Software engineer, marketing, BEY HR" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted mb-1" for="Location">City</label>
+                    <select asp-for="Location" class="form-select form-select-lg bey-input" id="Location">
+                        <option value="">All cities</option>
+                        @foreach (var city in cities)
+                        {
+                            <option value="@city">@city</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-lg hrm-btn-primary w-100 bey-search-btn">Search jobs</button>
+                </div>
+            </div>
+        </form>
+
+    
         <p class="small text-muted mt-4 mb-0">
             Demo admin: <strong>admin@hrmapp.local</strong> / <strong>Admin123!</strong>
         </p>
     </div>
-    <div class="col-lg-5 mt-4 mt-lg-0">
-        <div class="hrm-card p-4">
-            <h2 class="h5 mb-3">Who uses this portal?</h2>
-            <ul class="list-unstyled mb-0">
-                <li class="mb-2"><span class="badge hrm-badge-approved me-2">Candidate</span> Search jobs, apply, manage profile</li>
-                <li class="mb-2"><span class="badge bg-dark me-2">Company</span> Post roles, review applicants, approve candidates</li>
-                <li><span class="badge hrm-badge-pending me-2">Admin</span> Overview of users and listings</li>
-            </ul>
+</section>
+
+<section class="container pb-5">
+    @if (!string.IsNullOrWhiteSpace(Model?.Query) || !string.IsNullOrWhiteSpace(Model?.Location))
+    {
+        <h2 class="h4 mb-3">Matching listings</h2>
+    }
+    else
+    {
+        <h2 class="h4 mb-3">Latest openings</h2>
+    }
+
+    @if (Model!.Results.Count == 0)
+    {
+        <div class="hrm-card p-5 text-center text-secondary">
+            No jobs match your filters yet. Adjust your search or try another city.
         </div>
-    </div>
-</div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var j in Model!.Results)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <div class="hrm-card p-4 h-100 bey-job-card">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div>
+                                <h3 class="h5 mb-1">@j.Title</h3>
+                                <a class="small" asp-controller="Companies" asp-action="Details" asp-route-id="@j.CompanyProfileId">@j.Company.CompanyName</a>
+                            </div>
+                            <span class="badge rounded-pill text-bg-dark">@j.EmploymentType</span>
+                        </div>
+                        <p class="small text-muted mt-2 mb-3">@j.Location</p>
+                        <p class="small text-secondary mb-0 bey-clamp-3">@(j.Description.Length > 140 ? j.Description[..140] + "…" : j.Description)</p>
+                        <div class="mt-3">
+                            <a class="btn btn-sm hrm-btn-primary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Jobs","Candidate")">Apply after sign-in</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="small text-muted mt-4 mb-0">
+            Candidates can sign up to apply directly and track applications in the dashboard.
+        </p>
+    }
+</section>

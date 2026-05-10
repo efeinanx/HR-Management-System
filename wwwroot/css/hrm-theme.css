@@ -168,3 +168,219 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):hover {
     border: 1px solid #a7f3d0;
     border-radius: 999px;
 }
+
+/* —— BEY HR landing & marketing —— */
+.hrm-navbar-bey {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+}
+
+/* Center Home / About / Contact in header: 1fr | auto | 1fr grid (desktop) */
+@media (min-width: 992px) {
+    .hrm-navbar-bey.navbar-expand-lg .container-fluid.bey-nav-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 1rem;
+    }
+
+    .hrm-navbar-bey.navbar-expand-lg .bey-nav-shell .navbar-brand {
+        grid-column: 1;
+        justify-self: start;
+        margin-right: 0;
+    }
+
+    .hrm-navbar-bey.navbar-expand-lg .bey-nav-shell .navbar-collapse {
+        display: contents !important;
+    }
+
+    .hrm-navbar-bey.navbar-expand-lg .bey-nav-links {
+        grid-column: 2;
+        justify-self: center;
+    }
+
+    .hrm-navbar-bey.navbar-expand-lg .bey-nav-actions {
+        grid-column: 3;
+        justify-self: end;
+        padding-bottom: 0 !important;
+    }
+}
+
+.bey-brand-text {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 1.05rem;
+}
+
+.bey-brand-mark {
+    border-radius: 0.55rem;
+    box-shadow: 0 4px 12px rgba(20, 83, 45, 0.45);
+}
+
+.hrm-navbar-bey .navbar-brand {
+    white-space: nowrap;
+    text-align: left;
+    word-break: normal;
+}
+
+.bey-brand-logo {
+    height: 42px;
+    width: auto;
+    max-width: min(220px, 46vw);
+    display: block;
+    object-fit: contain;
+}
+
+@media (min-width: 992px) {
+    .bey-brand-logo {
+        height: 50px;
+        max-width: 260px;
+    }
+}
+
+.bey-nav-pill:hover {
+    background: rgba(245, 240, 232, 0.12);
+    color: #fff !important;
+}
+
+.bey-hero {
+    position: relative;
+    background:
+        radial-gradient(ellipse 120% 80% at 70% -20%, rgba(22, 101, 52, 0.45), transparent 50%),
+        linear-gradient(165deg, #0a0a0a 0%, #1a1a1c 42%, #14532d 120%);
+    color: var(--hrm-offwhite);
+    overflow: hidden;
+}
+
+.bey-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 40h40V0H0z' fill='none'/%3E%3Cpath d='M40 0v40M0 40h40' stroke='%23f5f0e8' stroke-opacity='.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.bey-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.bey-hero-inner {
+    padding-top: 3rem;
+    padding-bottom: 3.5rem;
+}
+
+@media (min-width: 992px) {
+    .bey-hero-inner {
+        padding-top: 4.5rem;
+        padding-bottom: 5rem;
+    }
+}
+
+.bey-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    color: rgba(245, 240, 232, 0.65);
+    font-weight: 600;
+}
+
+.bey-hero .bey-eyebrow {
+    color: rgba(245, 240, 232, 0.65);
+}
+
+.bey-eyebrow-muted {
+    color: var(--hrm-green) !important;
+    opacity: 0.85;
+}
+
+.bey-hero-title {
+    color: #fff;
+    line-height: 1.15;
+    text-shadow: 0 2px 40px rgba(0, 0, 0, 0.35);
+}
+
+.bey-hero-lead {
+    color: rgba(245, 240, 232, 0.82) !important;
+}
+
+.bey-search-shell {
+    background: rgba(255, 255, 255, 0.97) !important;
+    border: 1px solid rgba(245, 240, 232, 0.9) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(20, 83, 45, 0.08) !important;
+    border-radius: 1rem !important;
+}
+
+.bey-input {
+    border-radius: 0.65rem !important;
+    border-color: var(--hrm-offwhite-dim) !important;
+}
+
+.bey-input:focus {
+    border-color: var(--hrm-green) !important;
+    box-shadow: 0 0 0 0.2rem rgba(20, 83, 45, 0.2) !important;
+}
+
+.bey-search-btn {
+    border-radius: 0.65rem !important;
+    font-weight: 600;
+}
+
+.bey-job-card {
+    border-radius: 0.85rem !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bey-job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bey-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.bey-stat-tile {
+    border-radius: 0.85rem !important;
+    border: 1px solid var(--hrm-offwhite-dim);
+}
+
+.bey-section-card {
+    border-radius: 0.85rem !important;
+    border: 1px solid var(--hrm-offwhite-dim);
+}
+
+.bey-team-band {
+    background: linear-gradient(180deg, var(--hrm-offwhite-dim), var(--hrm-offwhite));
+    border-top: 1px solid rgba(20, 83, 45, 0.12);
+}
+
+.bey-team-card {
+    border-radius: 1rem !important;
+}
+
+.bey-team-avatar {
+    width: 72px;
+    height: 72px;
+    margin-inline: auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--hrm-green), var(--hrm-green-light));
+    color: var(--hrm-offwhite);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.letter-spacing {
+    letter-spacing: 0.12em;
+}
+
+a.link-light {
+    border-bottom: none !important;
+}
