@@ -1,0 +1,53 @@
+@model JobSearchViewModel
+@if (Model.TotalPages > 1)
+{
+    var start = (Model.Page - 1) * JobSearchViewModel.PageSize + 1;
+    var end = Math.Min(Model.Page * JobSearchViewModel.PageSize, Model.TotalCount);
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3 mt-4">
+        <p class="small text-muted mb-0">
+            Showing @start–@end of @Model.TotalCount listings
+        </p>
+        <nav aria-label="Job results pages">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.Page <= 1 ? "disabled" : null)">
+                    @if (Model.Page <= 1)
+                    {
+                        <span class="page-link">Previous</span>
+                    }
+                    else
+                    {
+                        <a class="page-link"
+                           asp-action="@ViewContext.RouteData.Values["action"]"
+                           asp-route-Query="@Model.Query"
+                           asp-route-Location="@Model.Location"
+                           asp-route-Page="@(Model.Page - 1)">Previous</a>
+                    }
+                </li>
+                @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+                {
+                    <li class="page-item @(pageNumber == Model.Page ? "active" : null)">
+                        <a class="page-link"
+                           asp-action="@ViewContext.RouteData.Values["action"]"
+                           asp-route-Query="@Model.Query"
+                           asp-route-Location="@Model.Location"
+                           asp-route-Page="@pageNumber">@pageNumber</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : null)">
+                    @if (Model.Page >= Model.TotalPages)
+                    {
+                        <span class="page-link">Next</span>
+                    }
+                    else
+                    {
+                        <a class="page-link"
+                           asp-action="@ViewContext.RouteData.Values["action"]"
+                           asp-route-Query="@Model.Query"
+                           asp-route-Location="@Model.Location"
+                           asp-route-Page="@(Model.Page + 1)">Next</a>
+                    }
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

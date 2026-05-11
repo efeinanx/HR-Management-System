@@ -2,21 +2,22 @@
 @{
     ViewData["Title"] = "Discover opportunities";
     ViewData["FullWidthMain"] = true;
+    ViewData["HomeSnapScroll"] = true;
     var cities = (IEnumerable<string>)ViewBag.Cities!;
 }
-<section class="bey-hero text-center text-lg-start">
+<section class="bey-hero bey-home-panel text-center text-lg-start">
     <div class="container bey-hero-inner">
         <p class="bey-eyebrow mb-2">BEY HR — Talent meets opportunity</p>
         <h1 class="bey-hero-title display-4 fw-bold mb-3">Discover career opportunities that fit you</h1>
         <p class="bey-hero-lead lead text-secondary mb-4 mb-lg-5 col-lg-9">
-            Search open roles by keyword, title, or company — filter by city and explore live listings before you sign up.
+            Search open roles by keyword in the title or description — filter by city and explore live listings before you sign up.
         </p>
 
         <form method="get" asp-action="Index" asp-controller="Home" class="bey-search-shell hrm-card p-3 p-md-4 mb-4">
             <div class="row g-3 align-items-stretch">
                 <div class="col-md-5">
-                    <label class="form-label small text-muted mb-1" for="Query">Role, company, or keyword</label>
-                    <input asp-for="Query" class="form-control form-control-lg bey-input" id="Query" placeholder="e.g. Software engineer, marketing, BEY HR" />
+                    <label class="form-label small text-muted mb-1" for="Query">Keyword</label>
+                    <input asp-for="Query" class="form-control form-control-lg bey-input" id="Query" placeholder="e.g. Software engineer, marketing" />
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small text-muted mb-1" for="Location">City</label>
@@ -37,18 +38,24 @@
     
         <p class="small text-muted mt-4 mb-0">
             Demo admin: <strong>admin@hrmapp.local</strong> / <strong>Admin123!</strong>
+            <span class="d-block mt-1">
+                Demo company: <strong>company1@demo.hrmapp.local</strong> / <strong>Demo123!</strong>
+                <span class="mx-1">·</span>
+                Demo candidate: <strong>candidate1@demo.hrmapp.local</strong> / <strong>Demo123!</strong>
+            </span>
         </p>
     </div>
 </section>
 
-<section class="container pb-5">
+<section class="bey-home-panel bey-home-listings">
+    <div class="container pb-5">
     @if (!string.IsNullOrWhiteSpace(Model?.Query) || !string.IsNullOrWhiteSpace(Model?.Location))
     {
-        <h2 class="h4 mb-3">Matching listings</h2>
+        <h2 class="h4 mb-3 bey-home-listings-heading">Matching listings</h2>
     }
     else
     {
-        <h2 class="h4 mb-3">Latest openings</h2>
+        <h2 class="h4 mb-3 bey-home-listings-heading">Latest openings</h2>
     }
 
     @if (Model!.Results.Count == 0)
@@ -80,8 +87,10 @@
                 </div>
             }
         </div>
+        <partial name="_JobSearchPagination" model="Model" />
         <p class="small text-muted mt-4 mb-0">
             Candidates can sign up to apply directly and track applications in the dashboard.
         </p>
     }
+    </div>
 </section>

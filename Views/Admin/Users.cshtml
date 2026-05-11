@@ -1,34 +1,47 @@
-@model IList<AdminUserListItemViewModel>
+@model AdminPagedViewModel<AdminUserListItemViewModel>
 @{
-    ViewData["Title"] = "All users";
+    ViewData["Title"] = "Tüm kullanıcılar";
+    var pagination = ViewBag.Pagination as PagedNavigationViewModel;
 }
 <h1 class="h3 mb-2">@ViewData["Title"]</h1>
 <p class="text-secondary mb-4">@ViewData["ListDescription"]</p>
-<div class="table-responsive hrm-card">
-    <table class="table table-hover mb-0 hrm-table">
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>Display name</th>
-                <th>Roles</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var u in Model)
-        {
-            <tr>
-                <td>@u.Email</td>
-                <td>@u.DisplayName</td>
-                <td>@u.Roles</td>
-                <td class="text-end">
-                    <form asp-action="DeleteUser" asp-route-id="@u.Id" method="post" onsubmit="return confirm('Delete this user?');">
-                        @Html.AntiForgeryToken()
-                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+@if (Model.Items.Count == 0)
+{
+    <p class="text-secondary">Kayıtlı kullanıcı bulunamadı.</p>
+}
+else
+{
+    <div class="table-responsive hrm-card">
+        <table class="table table-hover mb-0 hrm-table">
+            <thead>
+                <tr>
+                    <th>E-posta</th>
+                    <th>Görünen ad</th>
+                    <th>Roller</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var u in Model.Items)
+            {
+                <tr>
+                    <td>@u.Email</td>
+                    <td>@u.DisplayName</td>
+                    <td>@u.Roles</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-dark" asp-action="UserDetails" asp-route-id="@u.Id">Detay</a>
+                        <form class="d-inline" asp-action="DeleteUser" asp-route-id="@u.Id" method="post" onsubmit="return confirm('Bu kullanıcı silinsin mi?');">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    @if (pagination != null)
+    {
+        <partial name="_AdminPagination" model="pagination" />
+    }
+}

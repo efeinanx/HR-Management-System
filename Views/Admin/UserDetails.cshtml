@@ -1,0 +1,65 @@
+@model AdminUserDetailsViewModel
+@{
+    ViewData["Title"] = Model.DisplayName;
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">@ViewData["Title"]</h1>
+    <a class="btn btn-outline-secondary btn-sm" asp-action="Users">Kullanıcı listesine dön</a>
+</div>
+<div class="hrm-card p-4 mb-3">
+    <h2 class="h5 mb-3">Hesap bilgileri</h2>
+    <dl class="row mb-0">
+        <dt class="col-sm-3">E-posta</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+        <dt class="col-sm-3">Görünen ad</dt>
+        <dd class="col-sm-9">@Model.DisplayName</dd>
+        <dt class="col-sm-3">Roller</dt>
+        <dd class="col-sm-9">@Model.Roles</dd>
+        <dt class="col-sm-3">Hesap türü</dt>
+        <dd class="col-sm-9">@Model.AccountType</dd>
+    </dl>
+</div>
+@if (Model.CompanyProfileId.HasValue)
+{
+    <div class="hrm-card p-4 mb-3">
+        <h2 class="h5 mb-3">Şirket profili</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Şirket adı</dt>
+            <dd class="col-sm-9">@Model.CompanyName</dd>
+            <dt class="col-sm-3">Sektör</dt>
+            <dd class="col-sm-9">@Model.Industry</dd>
+            <dt class="col-sm-3">Şehir</dt>
+            <dd class="col-sm-9">@Model.CompanyLocation</dd>
+            <dt class="col-sm-3">Web sitesi</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyWebsite))
+                {
+                    <a href="@Model.CompanyWebsite" target="_blank">@Model.CompanyWebsite</a>
+                }
+            </dd>
+            <dt class="col-sm-3">Açıklama</dt>
+            <dd class="col-sm-9 preserve-lines">@Model.CompanyDescription</dd>
+            <dt class="col-sm-3">İlan sayısı</dt>
+            <dd class="col-sm-9">@Model.JobPostingCount</dd>
+        </dl>
+        <div class="mt-3">
+            <a class="btn btn-sm hrm-btn-primary" asp-controller="Companies" asp-action="Details" asp-route-id="@Model.CompanyProfileId">Şirket sayfasını aç</a>
+        </div>
+    </div>
+}
+@if (Model.CandidateProfileId.HasValue)
+{
+    <div class="hrm-card p-4">
+        <h2 class="h5 mb-3">Aday profili</h2>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Başlık</dt>
+            <dd class="col-sm-9">@Model.CandidateHeadline</dd>
+            <dt class="col-sm-3">Şehir</dt>
+            <dd class="col-sm-9">@Model.CandidateLocation</dd>
+            <dt class="col-sm-3">Özet</dt>
+            <dd class="col-sm-9 preserve-lines">@Model.CandidateSummary</dd>
+            <dt class="col-sm-3">Başvuru sayısı</dt>
+            <dd class="col-sm-9">@Model.ApplicationCount</dd>
+        </dl>
+    </div>
+}

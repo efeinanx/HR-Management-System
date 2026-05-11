@@ -58,6 +58,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vSm9iQWRtaW5EZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/efeinan/Downloads/HRM project/HrmApp/Views/Admin/UserDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vVXNlckRldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/efeinan/Downloads/HRM project/HrmApp/Views/Admin/Users.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vVXNlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -166,8 +170,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/efeinan/Downloads/HRM project/HrmApp/Views/Shared/_AdminPagination.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19BZG1pblBhZ2luYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/efeinan/Downloads/HRM project/HrmApp/Views/Shared/_JobPostingForm.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19Kb2JQb3N0aW5nRm9ybS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/efeinan/Downloads/HRM project/HrmApp/Views/Shared/_JobSearchPagination.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19Kb2JTZWFyY2hQYWdpbmF0aW9uLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/efeinan/Downloads/HRM project/HrmApp/Views/Shared/_LayoutAdmin.cshtml]

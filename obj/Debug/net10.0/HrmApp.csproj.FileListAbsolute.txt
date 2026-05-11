@@ -332,4 +332,5 @@
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/HrmApp.sourcelink.json
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/6rmtoym4ov-{0}-kab8qs080g-kab8qs080g.gz
 /Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/tbgp0k5gqr-{0}-gb6geqv154-gb6geqv154.gz
-/Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/rhuxoocqsp-{0}-iengbrkxr6-iengbrkxr6.gz
+/Users/efeinan/Downloads/HRM project/HrmApp/bin/Debug/net10.0/Bogus.dll
+/Users/efeinan/Downloads/HRM project/HrmApp/obj/Debug/net10.0/compressed/rhuxoocqsp-{0}-qwcyjpzwmm-qwcyjpzwmm.gz

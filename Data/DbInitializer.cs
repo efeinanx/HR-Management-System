@@ -1,5 +1,6 @@
 using HrmApp.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HrmApp.Data;
 
@@ -14,6 +15,7 @@ public static class DbInitializer
         using var scope = services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var db = scope.ServiceProvider.GetRequiredService<HrmDbContext>();
 
         foreach (var role in new[] { AdminRole, CompanyRole, CandidateRole })
         {
@@ -35,5 +37,7 @@ public static class DbInitializer
             if (result.Succeeded)
                 await userManager.AddToRoleAsync(admin, AdminRole);
         }
+
+        await DemoDataSeeder.SeedAsync(db, userManager);
     }
 }

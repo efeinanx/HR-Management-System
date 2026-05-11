@@ -1,5 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@inject UserManager<ApplicationUser> UserManager
+@{
+    var homeSnapScroll = ViewData["HomeSnapScroll"] as bool? == true;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = currentUser?.DisplayName ?? User.Identity?.Name;
+}
+<!DOCTYPE html>
+<html lang="en" class="@(homeSnapScroll ? "bey-home-scroll" : null)">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,13 +15,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HrmApp.styles.css" asp-append-version="true" />
 </head>
-<body class="hrm-body d-flex flex-column">
-    @inject UserManager<ApplicationUser> UserManager
-    @{
-        var currentUser = await UserManager.GetUserAsync(User);
-        var displayName = currentUser?.DisplayName ?? User.Identity?.Name;
-    }
-    <header>
+<body class="hrm-body d-flex flex-column@(homeSnapScroll ? " bey-home-page" : "")">
+    <header class="@(homeSnapScroll ? "bey-home-header" : null)">
         <nav class="navbar navbar-expand-lg navbar-dark hrm-navbar hrm-navbar-bey mb-0">
             <div class="container-fluid px-3 px-lg-4 bey-nav-shell">
                 <a class="navbar-brand d-flex align-items-center py-1 py-lg-2" asp-controller="Home" asp-action="Index" title="BEY HR">
@@ -86,7 +87,7 @@
             </div>
         }
     </main>
-    <footer class="hrm-footer py-4 mt-auto">
+    <footer class="hrm-footer py-4 mt-auto@(homeSnapScroll ? " bey-home-footer" : "")">
         <div class="container small">
             <div class="row g-3 align-items-center">
                 <div class="col-md-6">

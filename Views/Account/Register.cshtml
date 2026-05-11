@@ -1,49 +1,97 @@
 @model RegisterViewModel
 @{
     ViewData["Title"] = "Create account";
+    ViewData["FullWidthMain"] = true;
 }
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="hrm-card p-4">
-            <h1 class="h4 mb-3">Create account</h1>
-            <form asp-action="Register" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
-                <div class="mb-3">
-                    <label asp-for="DisplayName" class="form-label"></label>
-                    <input asp-for="DisplayName" class="form-control" />
-                    <span asp-validation-for="DisplayName" class="text-danger small"></span>
+<section class="bey-auth-page">
+    <div class="container py-4 py-lg-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-xxl-9">
+                <div class="hrm-card overflow-hidden bey-auth-shell">
+                    <div class="row g-0">
+                        <div class="col-lg-5 bey-auth-aside p-4 p-lg-5 d-flex flex-column justify-content-between">
+                            <div>
+                                <p class="bey-eyebrow bey-eyebrow-muted mb-2">BEY HR</p>
+                                <h1 class="h2 fw-bold mb-3">Create your account</h1>
+                                <p class="text-secondary mb-4">
+                                    Join as a candidate to apply for roles, or as a company to publish openings and manage applications.
+                                </p>
+                                <ul class="bey-auth-points list-unstyled mb-0">
+                                    <li>Search and filter live job listings</li>
+                                    <li>Track applications from one dashboard</li>
+                                    <li>Manage company profile and postings</li>
+                                </ul>
+                            </div>
+                            <p class="small text-secondary mb-0 mt-4">
+                                Already registered?
+                                <a asp-action="Login" class="fw-semibold">Sign in</a>
+                            </p>
+                        </div>
+                        <div class="col-lg-7 bey-auth-form p-4 p-lg-5">
+                            <h2 class="h4 mb-1">Account details</h2>
+                            <p class="text-secondary small mb-4">Choose your account type and complete the form below.</p>
+                            <form asp-action="Register" method="post" class="bey-auth-form-fields" novalidate>
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 small py-2" role="alert"></div>
+                                <div class="mb-3">
+                                    <label asp-for="DisplayName" class="form-label small text-muted mb-1"></label>
+                                    <input asp-for="DisplayName" class="form-control bey-input" placeholder="Your full name or company name" />
+                                    <span asp-validation-for="DisplayName" class="text-danger small"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label small text-muted mb-1"></label>
+                                    <input asp-for="Email" class="form-control bey-input" autocomplete="email" placeholder="name@company.com" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <fieldset class="mb-4">
+                                    <legend class="form-label small text-muted mb-2">@Html.DisplayNameFor(m => m.Role)</legend>
+                                    <div class="bey-role-grid">
+                                        <div class="bey-role-option">
+                                            <input asp-for="Role" class="btn-check" type="radio" value="Candidate" id="register-role-candidate" />
+                                            <label class="bey-role-card" for="register-role-candidate">
+                                                <span class="bey-role-icon">A</span>
+                                                <span class="bey-role-copy">
+                                                    <span class="bey-role-title">Candidate</span>
+                                                    <span class="bey-role-text">Apply to jobs and manage your profile.</span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div class="bey-role-option">
+                                            <input asp-for="Role" class="btn-check" type="radio" value="Company" id="register-role-company" />
+                                            <label class="bey-role-card" for="register-role-company">
+                                                <span class="bey-role-icon">C</span>
+                                                <span class="bey-role-copy">
+                                                    <span class="bey-role-title">Company</span>
+                                                    <span class="bey-role-text">Publish roles and review applicants.</span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Role" class="text-danger small d-block mt-2"></span>
+                                </fieldset>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Password" class="form-label small text-muted mb-1"></label>
+                                        <input asp-for="Password" class="form-control bey-input" autocomplete="new-password" placeholder="At least 6 characters" />
+                                        <span asp-validation-for="Password" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="ConfirmPassword" class="form-label small text-muted mb-1"></label>
+                                        <input asp-for="ConfirmPassword" class="form-control bey-input" autocomplete="new-password" placeholder="Repeat password" />
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mt-3 mb-4">
+                                    Password must include uppercase, lowercase, and a number.
+                                </p>
+                                <button type="submit" class="btn btn-lg hrm-btn-primary w-100 bey-search-btn">Create account</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" autocomplete="email" />
-                    <span asp-validation-for="Email" class="text-danger small"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Role" class="form-label"></label>
-                    <select asp-for="Role" class="form-select">
-                        <option value="Candidate">Candidate</option>
-                        <option value="Company">Company (HR)</option>
-                    </select>
-                    <span asp-validation-for="Role" class="text-danger small"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" autocomplete="new-password" />
-                    <span asp-validation-for="Password" class="text-danger small"></span>
-                </div>
-                <div class="mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
-                </div>
-                <button type="submit" class="btn hrm-btn-primary w-100">Register</button>
-            </form>
-            <p class="small mt-3 mb-0">
-                Already registered? <a asp-action="Login">Sign in</a>
-            </p>
+            </div>
         </div>
     </div>
-</div>
+</section>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

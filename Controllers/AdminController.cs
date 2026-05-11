@@ -35,13 +35,16 @@ public class AdminController : Controller
         return View();
     }
 
-    public async Task<IActionResult> Users()
+    public async Task<IActionResult> Users(int page = 1)
     {
-        ViewData["Title"] = "All users";
-        ViewData["ListDescription"] = "Registered accounts across the platform.";
+        ViewData["Title"] = "Tüm kullanıcılar";
+        ViewData["ListDescription"] = "Platformdaki kayıtlı hesaplar.";
         ViewBag.Section = "users";
 
-        var users = await _userManager.Users.AsNoTracking().OrderBy(u => u.Email).ToListAsync();
+        var ordered = _userManager.Users.AsNoTracking().OrderBy(u => u.Email);
+        var (users, totalCount, currentPage) = await ordered.ToPagedListAsync(
+            page,
+            AdminPagedViewModel<AdminUserListItemViewModel>.PageSize);
 
         var rows = new List<AdminUserListItemViewModel>();
         foreach (var u in users)
@@ -56,22 +59,108 @@ public class AdminController : Controller
             });
         }
 
-        return View(rows);
+        var model = new AdminPagedViewModel<AdminUserListItemViewModel>
+        {
+            Page = currentPage,
+            TotalCount = totalCount,
+            Items = rows
+        };
+        ViewBag.Pagination = BuildPagination(model, nameof(Users));
+
+        return View(model);
     }
 
-    public async Task<IActionResult> AllJobs()
+    public async Task<IActionResult> UserDetails(string id)
     {
-        ViewData["Title"] = "All job postings";
+        ViewBag.Section = "users";
+
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+            return NotFound();
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var vm = new AdminUserDetailsViewModel
+        {
+            Id = user.Id,
+            Email = user.Email,
+            DisplayName = user.DisplayName,
+            Roles = string.Join(", ", roles)
+        };
+
+        var company = await _db.CompanyProfiles
+            .AsNoTracking()
+            .Include(c => c.JobPostings)
+            .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+        if (company != null)
+        {
+            vm.AccountType = "Şirket";
+            vm.CompanyProfileId = company.Id;
+            vm.CompanyName = company.CompanyName;
+            vm.Industry = company.Industry;
+            vm.CompanyLocation = company.Location;
+            vm.CompanyWebsite = company.Website;
+            vm.CompanyDescription = company.Description;
+            vm.JobPostingCount = company.JobPostings.Count;
+            ViewData["Title"] = company.CompanyName;
+            return View(vm);
+        }
+
+        var candidate = await _db.CandidateProfiles
+            .AsNoTracking()
+            .Include(c => c.Applications)
+            .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+        if (candidate != null)
+        {
+            vm.AccountType = "Aday";
+            vm.CandidateProfileId = candidate.Id;
+            vm.CandidateHeadline = candidate.Headline;
+            vm.CandidateLocation = candidate.Location;
+            vm.CandidateSummary = candidate.Summary;
+            vm.ApplicationCount = candidate.Applications.Count;
+            ViewData["Title"] = candidate.FullName;
+            return View(vm);
+        }
+
+        vm.AccountType = roles.Contains(DbInitializer.AdminRole) ? "Yönetici" : "Hesap";
+        ViewData["Title"] = user.DisplayName;
+        return View(vm);
+    }
+
+    public async Task<IActionResult> AllJobs(int page = 1)
+    {
+        ViewData["Title"] = "Tüm ilanlar";
         ViewBag.Section = "jobs";
 
-        var jobs = await _db.JobPostings
+        var ordered = _db.JobPostings
             .AsNoTracking()
             .Include(j => j.Company)
-            .OrderByDescending(j => j.CreatedAt)
-            .ToListAsync();
+            .OrderByDescending(j => j.CreatedAt);
 
-        return View(jobs);
+        var (jobs, totalCount, currentPage) = await ordered.ToPagedListAsync(
+            page,
+            AdminPagedViewModel<JobPosting>.PageSize);
+
+        var model = new AdminPagedViewModel<JobPosting>
+        {
+            Page = currentPage,
+            TotalCount = totalCount,
+            Items = jobs
+        };
+        ViewBag.Pagination = BuildPagination(model, nameof(AllJobs));
+
+        return View(model);
     }
+
+    private static PagedNavigationViewModel BuildPagination<T>(AdminPagedViewModel<T> model, string actionName) =>
+        new()
+        {
+            Page = model.Page,
+            TotalCount = model.TotalCount,
+            TotalPages = model.TotalPages,
+            ActionName = actionName
+        };
 
     public async Task<IActionResult> JobAdminDetails(int id)
     {

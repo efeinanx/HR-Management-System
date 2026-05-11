@@ -290,16 +290,16 @@ public class CandidateController : Controller
             .Include(j => j.Company)
             .Where(j => j.IsActive);
 
-        if (!string.IsNullOrWhiteSpace(model.Query))
-        {
-            var term = model.Query.Trim();
-            q = q.Where(j => j.Title.Contains(term) || j.Description.Contains(term));
-        }
+        q = q.WithKeyword(model.Query);
 
         if (!string.IsNullOrWhiteSpace(model.Location))
             q = q.Where(j => j.Location == model.Location);
 
-        model.Results = await q.OrderByDescending(j => j.CreatedAt).ToListAsync();
+        var ordered = q.OrderByDescending(j => j.CreatedAt);
+        var (results, totalCount, page) = await ordered.ToPagedListAsync(model.Page, JobSearchViewModel.PageSize);
+        model.Results = results;
+        model.TotalCount = totalCount;
+        model.Page = page;
 
         var profile = await GetProfileAsync();
         ViewBag.AppliedJobIds = profile == null
